@@ -1,3 +1,4 @@
+const executeQuery = require("../utils/executeQuery");
 
 exports.createPost = async (req, res, next) => {
     try {
@@ -14,7 +15,7 @@ exports.createPost = async (req, res, next) => {
 exports.deletePost = async (req, res, next) => {
     try {
         const postId = req.params.postId;
-        const userId = req.user.id; // Assuming you have middleware to authenticate users and store user information in req.user
+        const userId = req.user.id; 
         const deletePostQuery = 'DELETE FROM Post WHERE post_id = ? AND user_id = ?';
         const deleteCommentsQuery = 'DELETE FROM Comment WHERE post_id = ?';
         const deleteLikesQuery = 'DELETE FROM Likes WHERE post_id = ?';
@@ -65,7 +66,7 @@ exports.getOnePost = async (req, res, next) => {
 
 exports.getAllPostsOfOneUser = async (req, res, next) => {
     try {
-        const userId = req.params.userId; // Assuming you have a route parameter for userId
+        const userId = req.params.userId; 
         const query = 'SELECT * FROM Post WHERE user_id = ?';
         const values = [userId];
         const posts = await executeQuery(query, values);

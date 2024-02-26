@@ -1,53 +1,43 @@
 const bcrypt = require('bcrypt');
-const mysql = require('mysql2'); 
-const connection = require('../config/db');
-
+const executeQuery = require('../utils/executeQuery');
 
 const hashPassword = async (password) => {
     const saltRounds = 10;
     return await bcrypt.hash(password, saltRounds);
 };
 
-
 const comparePasswords = async (plainPassword, hashedPassword) => {
     return await bcrypt.compare(plainPassword, hashedPassword);
 };
 
+exports.signUpUser = async (req, res, next) => {
+    try {
+        const { name, email, password, userName } = req.body;
 
-exports.signUpUser = catchAsyncError(async (req, res, next) => {
-    const { name, email, password, userName } = req.body;
+        const hashedPassword = await hashPassword(password);
 
-   
-    const hashedPassword = await hashPassword(password);
+        const sql = `INSERT INTO User (name, email, password, user_name) VALUES (?, ?, ?, ?)`;
+        const values = [name, email, hashedPassword, userName];
 
-    const sql = `INSERT INTO User (name, email, password, user_name) VALUES (?, ?, ?, ?)`;
-    const values = [name, email, hashedPassword, userName];
+        await executeQuery(sql, values);
 
-    
-    connection.query(sql, values, (error, results, fields) => {
-        if (error) {
-            return res.status(500).json({ error: 'Failed to create user' });
-        }
-        return res.status(200).json({
-            success:true,
-            msg:"User creation successful",
-        })
-    });
-});
+        res.status(200).json({
+            success: true,
+            msg: "User creation successful",
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to create user' });
+    }
+};
 
+exports.loginUser = async (req, res, next) => {
+    try {
+        const { email, password } = req.body;
 
-exports.loginUser = catchAsyncError(async (req, res, next) => {
-    const { email, password } = req.body;
+        const sql = `SELECT * FROM User WHERE email = ?`;
+        const values = [email];
 
-    
-    const sql = `SELECT * FROM User WHERE email = ?`;
-    const values = [email];
-
-   
-    connection.query(sql, values, async (error, results, fields) => {
-        if (error) {
-            return res.status(500).json({ error: 'Failed to fetch user' });
-        }
+        const results = await executeQuery(sql, values);
 
         if (results.length === 0) {
             return res.status(404).json({ error: 'User not found' });
@@ -55,7 +45,6 @@ exports.loginUser = catchAsyncError(async (req, res, next) => {
 
         const user = results[0];
 
-      
         const passwordMatch = await comparePasswords(password, user.password);
 
         if (!passwordMatch) {
@@ -63,10 +52,11 @@ exports.loginUser = catchAsyncError(async (req, res, next) => {
         }
 
         return res.status(200).json({
-            success:true,
-            msg:"Login successful",
+            success: true,
+            msg: "Login successful",
             user
-        })
-        
-    });
-});
+        });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch user' });
+    }
+};

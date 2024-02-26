@@ -35,6 +35,27 @@ exports.getUserProfile = async (req, res, next) => {
     }
 };
 
+exports.getFullUserProfile = async (req, res, next) => {
+    try {
+        const user_id = req.params.user_id;
+
+        const sql = `SELECT * FROM User WHERE id = ?`;
+        const user = await executeQuery(sql, [user_id]);
+
+        const postsSql = 'SELECT post_id, img_link FROM Post WHERE user_id = ?';
+        const posts = await executeQuery(postsSql, [user_id]);
+
+        const fullProfile = {
+            user: user[0],
+            posts: posts
+        };
+
+        res.status(200).json({ success: true, profile: fullProfile });
+    } catch (error) {
+        next(error);
+    }
+};
+
 exports.addUserBio = async (req, res, next) => {
     try {
         const user_id = req.params.user_id; 

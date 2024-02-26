@@ -9,27 +9,30 @@ function createTables(connection) {
 
     const createUserTableQuery = `
     CREATE TABLE IF NOT EXISTS User (
-      id INT AUTO_INCREMENT PRIMARY KEY,
+      user_id INT AUTO_INCREMENT PRIMARY KEY,
       name VARCHAR(255),
       email VARCHAR(255),
       password VARCHAR(255),
       user_name VARCHAR(255),
-      no_of_followers INT,
-      no_of_following INT,
-      no_of_posts INT,
+      no_of_followers INT DEFAULT 0,
+      no_of_following INT DEFAULT 0,
+      no_of_posts INT DEFAULT 0,
       profile_pic_link VARCHAR(255),
       bio TEXT,
-      multiple_post_ids JSON
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `;
 
     const createPostTableQuery = `
     CREATE TABLE IF NOT EXISTS Post (
       post_id INT AUTO_INCREMENT PRIMARY KEY,
-      time_of_post DATETIME,
+      user_id INT,
+      time_of_post DATETIME DEFAULT CURRENT_TIMESTAMP,
       img_link VARCHAR(255),
-      no_of_likes INT,
-      multiple_comment_ids JSON
+      no_of_likes INT DEFAULT 0,
+      no_of_comments INT DEFAULT 0,
+      FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
+      INDEX idx_user_id (user_id)
     )
   `;
 
@@ -37,8 +40,11 @@ function createTables(connection) {
     CREATE TABLE IF NOT EXISTS Comment (
       comment_id INT AUTO_INCREMENT PRIMARY KEY,
       user_id INT,
+      post_id INT,
       comment TEXT,
-      FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
+      FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE,
+      FOREIGN KEY (post_id) REFERENCES Post(post_id) ON DELETE CASCADE,
+      INDEX idx_post_id (post_id)
     )
   `;
 
@@ -48,7 +54,8 @@ function createTables(connection) {
       user_id INT,
       post_id INT,
       FOREIGN KEY (user_id) REFERENCES User(id),
-      FOREIGN KEY (post_id) REFERENCES Post(post_id) ON DELETE CASCADE
+      FOREIGN KEY (post_id) REFERENCES Post(post_id) ON DELETE CASCADE,
+      INDEX idx_post_id (post_id)
     )
   `;
 

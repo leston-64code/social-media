@@ -48,8 +48,8 @@ exports.updatePost = async (req, res, next) => {
     try {
         const post_id = req.params.post_id;
         const user_id = req.params.user_id;
-        const { img_link, no_of_likes, multiple_comment_ids } = req.body;
-        const query = 'UPDATE Post SET img_link = ?, no_of_likes = ?, multiple_comment_ids = ? WHERE post_id = ? AND user_id = ?';
+        const { img_link} = req.body;
+        const query = 'UPDATE Post SET img_link = ? WHERE post_id = ? AND user_id = ?';
         const values = [img_link, no_of_likes, JSON.stringify(multiple_comment_ids), post_id, user_id];
         await executeQuery(query, values);
         res.status(200).json({ message: 'Post updated successfully' });

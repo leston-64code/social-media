@@ -17,11 +17,25 @@ function createTables(connection) {
       no_of_followers INT DEFAULT 0,
       no_of_following INT DEFAULT 0,
       no_of_posts INT DEFAULT 0,
+      accepted_followers TEXT,
+      pending_follow_requests TEXT,
       profile_pic_link VARCHAR(255),
       bio TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `;
+
+    const createFollowRequestTableQuery=`
+    CREATE TABLE IF NOT EXISTS FollowRequest (
+      request_id INT AUTO_INCREMENT PRIMARY KEY,
+      requester_id INT,
+      receiver_id INT,
+      status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending',
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (requester_id) REFERENCES User(user_id) ON DELETE CASCADE,
+      FOREIGN KEY (receiver_id) REFERENCES User(user_id) ON DELETE CASCADE
+    );
+    `
 
     const createPostTableQuery = `
     CREATE TABLE IF NOT EXISTS Post (
@@ -42,7 +56,7 @@ function createTables(connection) {
       user_id INT,
       post_id INT,
       comment TEXT,
-      FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE,
+      FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
       FOREIGN KEY (post_id) REFERENCES Post(post_id) ON DELETE CASCADE,
       INDEX idx_post_id (post_id)
     )
@@ -53,7 +67,7 @@ function createTables(connection) {
       like_id INT AUTO_INCREMENT PRIMARY KEY,
       user_id INT,
       post_id INT,
-      FOREIGN KEY (user_id) REFERENCES User(id),
+      FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
       FOREIGN KEY (post_id) REFERENCES Post(post_id) ON DELETE CASCADE,
       INDEX idx_post_id (post_id)
     )
@@ -73,6 +87,11 @@ function createTables(connection) {
     connection.query(createUserTableQuery, (err, results, fields) => {
         if (err) throw err;
         console.log('User table created or already exists.');
+    });
+
+    connection.query(createFollowRequestTableQuery, (err, results, fields) => {
+        if (err) throw err;
+        console.log('Follow Request table created or already exists.');
     });
 
     connection.query(createPostTableQuery, (err, results, fields) => {

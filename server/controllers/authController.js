@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const executeQuery = require('../utils/executeQuery');
+const { checkEmailExists } = require('../utils/checkEmailExists');
 
 const hashPassword = async (password) => {
     const saltRounds = 10;
@@ -13,6 +14,12 @@ const comparePasswords = async (plainPassword, hashedPassword) => {
 exports.signUpUser = async (req, res, next) => {
     try {
         const { name, email, password, userName } = req.body;
+
+        const emailExists = await checkEmailExists(email);
+        
+        if (emailExists) {
+            return res.status(400).json({ error: 'Email already registered' });
+        }
 
         const hashedPassword = await hashPassword(password);
 

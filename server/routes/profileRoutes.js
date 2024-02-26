@@ -4,11 +4,11 @@ const { updateUserBio, addUserBio, getUserProfile, uploadProfilePicture, removeP
 
 const router=express.Router()
 
-router.route("/uploadprofilepicture/:userId").post(uploadProfilePicture)
-router.route("/removeprofilepicture/:userId").put(removeProfilePicture)
-router.route("/getprofile/:userId").get(getUserProfile)
-router.route("/addbio/:userId").post(addUserBio)
-router.route("/updatebio/:userId").put(updateUserBio)
+router.route("/uploadprofilepicture/:user_id").post(uploadProfilePicture)
+router.route("/removeprofilepicture/:user_id").put(removeProfilePicture)
+router.route("/getprofile/:user_id").get(getUserProfile)
+router.route("/addbio/:user_id").post(addUserBio)
+router.route("/updatebio/:user_id").put(updateUserBio)
 
 
 module.exports=router

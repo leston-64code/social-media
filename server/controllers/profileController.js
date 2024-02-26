@@ -3,10 +3,10 @@ const executeQuery = require("../utils/executeQuery");
 
 exports.uploadProfilePicture = async (req, res, next) => {
     try {
-        const userId = req.userId;
+        const user_id = req.params.user_id;
         const profilePicLink = req.body.profilePicLink; 
         const sql = `UPDATE User SET profile_pic_link = ? WHERE id = ?`;
-        await executeQuery(sql, [profilePicLink, userId]);
+        await executeQuery(sql, [profilePicLink, user_id]);
         res.status(200).json({ success: true });
     } catch (error) {
         next(error);
@@ -15,9 +15,9 @@ exports.uploadProfilePicture = async (req, res, next) => {
 
 exports.removeProfilePicture = async (req, res, next) => {
     try {
-        const userId = req.userId; 
+        const user_id = req.params.user_id; 
         const sql = `UPDATE User SET profile_pic_link = NULL WHERE id = ?`;
-        await executeQuery(sql, [userId]);
+        await executeQuery(sql, [user_id]);
         res.status(200).json({ success: true });
     } catch (error) {
         next(error);
@@ -26,9 +26,9 @@ exports.removeProfilePicture = async (req, res, next) => {
 
 exports.getUserProfile = async (req, res, next) => {
     try {
-        const userId = req.userId;
+        const user_id = req.params.user_id;
         const sql = `SELECT * FROM User WHERE id = ?`;
-        const user = await executeQuery(sql, [userId]);
+        const user = await executeQuery(sql, [user_id]);
         res.status(200).json({ success: true, user: user[0] });
     } catch (error) {
         next(error);
@@ -37,10 +37,10 @@ exports.getUserProfile = async (req, res, next) => {
 
 exports.addUserBio = async (req, res, next) => {
     try {
-        const userId = req.userId; 
+        const user_id = req.params.user_id; 
         const bio = req.body.bio; 
         const sql = `UPDATE User SET bio = ? WHERE id = ?`;
-        await executeQuery(sql, [bio, userId]);
+        await executeQuery(sql, [bio, user_id]);
         res.status(200).json({ success: true });
     } catch (error) {
         next(error);
@@ -49,10 +49,10 @@ exports.addUserBio = async (req, res, next) => {
 
 exports.updateUserBio = async (req, res, next) => {
     try {
-        const userId = req.userId; 
+        const user_id = req.params.user_id; 
         const bio = req.body.bio; 
         const sql = `UPDATE User SET bio = ? WHERE id = ?`;
-        await executeQuery(sql, [bio, userId]);
+        await executeQuery(sql, [bio, user_id]);
         res.status(200).json({ success: true });
     } catch (error) {
         next(error);

@@ -18,6 +18,7 @@ function createTables(connection) {
       no_of_following INT DEFAULT 0,
       no_of_posts INT DEFAULT 0,
       accepted_followers TEXT,
+      following TEXT,
       pending_follow_requests TEXT,
       profile_pic_link VARCHAR(255),
       bio TEXT,

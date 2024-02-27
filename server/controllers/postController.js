@@ -22,23 +22,38 @@ exports.deletePost = async (req, res, next) => {
     try {
         const post_id = req.params.post_id;
         const user_id = req.params.user_id;
-        const deletePostQuery = 'DELETE FROM Post WHERE post_id = ? AND user_id = ?';
+
+        
+        const verifyPostQuery = 'SELECT user_id FROM Post WHERE post_id = ?';
+        const [post] = await executeQuery(verifyPostQuery, [post_id]);
+
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+
+        if (post.user_id !== parseInt(user_id)) {
+            return res.status(403).json({ message: 'You are not authorized to delete this post' });
+        }
+
+        const deletePostQuery = 'DELETE FROM Post WHERE post_id = ?';
         const deleteCommentsQuery = 'DELETE FROM Comment WHERE post_id = ?';
         const deleteLikesQuery = 'DELETE FROM Likes WHERE post_id = ?';
+        const updateUserQuery = 'UPDATE User SET no_of_posts = no_of_posts - 1 WHERE user_id = ?';
 
         await executeQuery('START TRANSACTION');
 
-        await executeQuery(deletePostQuery, [post_id, user_id]);
+        await executeQuery(deletePostQuery, [post_id]);
 
         await executeQuery(deleteCommentsQuery, [post_id]);
 
         await executeQuery(deleteLikesQuery, [post_id]);
 
+        await executeQuery(updateUserQuery, [user_id]);
+
         await executeQuery('COMMIT');
 
         res.status(200).json({ message: 'Post, associated comments, and likes deleted successfully' });
     } catch (error) {
-        // Rollback the transaction if an error occurs
         await executeQuery('ROLLBACK');
         next(error);
     }
@@ -89,7 +104,7 @@ exports.likePost = async (req, res, next) => {
 
         const checkLikeQuery = 'SELECT COUNT(*) AS count FROM Likes WHERE user_id = ? AND post_id = ?';
         const checkLikeValues = [user_id, post_id];
-        const [likeRow] = await executeQuery(checkLikeQuery, checkLikeValues);
+        const likeRow = await executeQuery(checkLikeQuery, checkLikeValues);
         const alreadyLiked = likeRow[0].count > 0;
 
 
@@ -115,7 +130,7 @@ exports.likePost = async (req, res, next) => {
             await executeQuery(updateLikesQuery, [post_id]);
         }
 
-        res.status(200).json({ message: 'Post liked successfully' });
+        res.status(200).json({ message});
     } catch (error) {
         next(error);
     }
@@ -126,7 +141,7 @@ exports.commentOnPost = async (req, res, next) => {
         const { post_id,user_id } = req.params;
         const { comment } = req.body;
         
-        const query = 'INSERT INTO Comment (user_id, post_id, comment) VALUES (?, ?)';
+        const query = 'INSERT INTO Comment (user_id, post_id, comment) VALUES (?, ?, ?)';
         const values = [user_id, post_id, comment];
         await executeQuery(query, values);
 
@@ -152,7 +167,7 @@ exports.deleteComment = async (req, res, next) => {
             return res.status(404).json({ message: 'Comment not found' });
         }
 
-        if (comment.user_id !== user_id) {
+        if (comment.user_id !== parseInt(user_id)) {
             return res.status(403).json({ message: 'You are not authorized to delete this comment' });
         }
 

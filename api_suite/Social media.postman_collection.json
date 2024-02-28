@@ -1,0 +1,497 @@
+{
+	"info": {
+		"_postman_id": "13d540f6-cdf4-474f-833b-c5abe22abe12",
+		"name": "Social media",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24037576"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Signup",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"leena Salis\",\r\n    \"email\":\" leena@gamil.com\",\r\n    \"password\":\"987654321\",\r\n    \"userName\":\"@leena\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/signup",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"leston@gamil.com\",\r\n    \"password\":\"987654321\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Post",
+			"item": [
+				{
+					"name": "Create Post",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/lesto/Desktop/IMG_20230218_081602.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/post/create/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"post",
+								"create",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Post",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/post/delete/1/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"post",
+								"delete",
+								"1",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Post",
+					"request": {
+						"method": "PUT",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Get One Post",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/post/getone/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"post",
+								"getone",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Post Of One User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/post/getall/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"post",
+								"getall",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Like Post",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/post/likepost/2/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"post",
+								"likepost",
+								"2",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Commet Post",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"comment\":\"Bomb💣💣💣💣\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/post/createcomment/1/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"post",
+								"createcomment",
+								"1",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Comment",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/post/deletecomment/1/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"post",
+								"deletecomment",
+								"1",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all comments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/post/getallcomments/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"post",
+								"getallcomments",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Profile",
+			"item": [
+				{
+					"name": "Get Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/profile/getProfile/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"profile",
+								"getProfile",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Profile Picture",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/lesto/Desktop/IMG_20230218_081602.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/profile/uploadprofilepicture/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"profile",
+								"uploadprofilepicture",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Profile Picture",
+					"request": {
+						"method": "PUT",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Bio",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"bio\":\"Leston is superman 🌍🌍 He likes music🎶🎶\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/profile/updatebio/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"profile",
+								"updatebio",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add User Bio",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"bio\":\"Student 🎒 College Life 🏫 🦋\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/profile/addbio/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"profile",
+								"addbio",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Followers",
+			"item": [
+				{
+					"name": "Send Follow Req",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/follow/sendfollowreq/3/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"follow",
+								"sendfollowreq",
+								"3",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Accept Follow Req",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/follow/acceptfollowreq/3/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"follow",
+								"acceptfollowreq",
+								"3",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reject Follow Req",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/follow/rejectfollowreq/4/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"follow",
+								"rejectfollowreq",
+								"4",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Followers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/follow/getfollowers/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"follow",
+								"getfollowers",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Following",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/follow/getfollowing/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"follow",
+								"getfollowing",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Unfollow",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/follow/unfollow/1/2",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"follow",
+								"unfollow",
+								"1",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

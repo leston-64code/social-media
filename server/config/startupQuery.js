@@ -20,7 +20,9 @@ function createTables(connection) {
       accepted_followers TEXT,
       following TEXT,
       pending_follow_requests TEXT,
-      profile_pic_link VARCHAR(255),
+      org_profile_pic VARCHAR(255),
+      compressed_half_pic VARCHAR(255),
+      compressed_full_pic VARCHAR(255),
       bio TEXT,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )

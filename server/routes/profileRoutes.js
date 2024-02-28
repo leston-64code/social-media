@@ -1,10 +1,12 @@
 const express=require("express")
 const { updateUserBio, addUserBio, getUserProfile, uploadProfilePicture, removeProfilePicture } = require("../controllers/profileController")
+const upload = require("../middlewares/multerService")
+
 
 
 const router=express.Router()
 
-router.route("/uploadprofilepicture/:user_id").post(uploadProfilePicture)
+router.route("/uploadprofilepicture/:user_id").post(upload.single('file'),uploadProfilePicture)
 router.route("/removeprofilepicture/:user_id").put(removeProfilePicture)
 router.route("/getprofile/:user_id").get(getUserProfile)
 router.route("/addbio/:user_id").post(addUserBio)

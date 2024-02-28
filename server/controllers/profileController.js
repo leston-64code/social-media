@@ -12,25 +12,24 @@ exports.uploadProfilePicture = async (req, res, next) => {
             return res.status(400).json({ success: false, message: "Profile picture file not found" });
         }
 
-
         const originalImage = req.file.buffer;
         const webpImageBuffer = await sharp(originalImage).toFormat('webp').toBuffer();
 
-        const sizes = [50, 100];
+        const sizes = [100, 200];
 
-        const originalKey = `user_${user_id}_original.webp`;
+        const originalKey = `profilePictures/user_${user_id}_${Date.now()}_original.webp`;
         await uploadToS3(webpImageBuffer, originalKey);
 
         const compressedUrls = await Promise.all(sizes.map(async size => {
-            const resizedImageBuffer = await sharp(originalImage).resize(size).toBuffer();
-            const key = `user_${user_id}_compressed_${size}.webp`;
+            const resizedImageBuffer = await sharp(webpImageBuffer).resize(size).toBuffer();
+            const key = `comProfilePictures/user_${user_id}_${Date.now()}_compressed_${size}.webp`;
             await uploadToS3(resizedImageBuffer, key);
             return getSignedUrl(key);
         }));
 
         const profilePicLink = getSignedUrl(originalKey);
-        const compressed_half_pic=compressedUrls[1]
-        const compressed_full_pic=compressedUrls[2]
+        const compressed_half_pic=compressedUrls[0]
+        const compressed_full_pic=compressedUrls[1]
         const sql = `UPDATE User SET org_profile_pic = ?, compressed_half_pic = ?, compressed_full_pic = ? WHERE user_id = ?`;
         await executeQuery(sql, [profilePicLink,compressed_half_pic,compressed_full_pic, user_id]);
 

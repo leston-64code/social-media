@@ -46,6 +46,7 @@ function createTables(connection) {
       user_id INT,
       time_of_post DATETIME DEFAULT CURRENT_TIMESTAMP,
       img_link VARCHAR(255),
+      com_img_link VARCHAR(255),
       no_of_likes INT DEFAULT 0,
       no_of_comments INT DEFAULT 0,
       FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,

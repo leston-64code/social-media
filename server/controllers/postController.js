@@ -1,11 +1,35 @@
+const sharp = require("sharp");
 const executeQuery = require("../utils/executeQuery");
+const { uploadToS3 } = require("../utils/aws/uploadToS3");
+const { getSignedUrl } = require("../utils/aws/getSignedUrl");
 
 exports.createPost = async (req, res, next) => {
     try {
         const user_id = req.params.user_id;
-        const { img_link } = req.body;
-        const query = 'INSERT INTO Post (img_link,user_id) VALUES (?,?)';
-        const values = [img_link,user_id];
+
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: "Post file not found" });
+        }
+
+        const originalImage = req.file.buffer;
+        const webpImageBuffer = await sharp(originalImage).toFormat('webp').toBuffer();
+
+        const sizes = [300];
+
+        const originalKey = `posts/post_${user_id}_${Date.now()}_original.webp`;
+        await uploadToS3(webpImageBuffer, originalKey);
+
+        const compressedUrls = await Promise.all(sizes.map(async size => {
+            const resizedImageBuffer = await sharp(webpImageBuffer).resize(size).toBuffer();
+            const key = `comPosts/post_${user_id}_${Date.now()}_compressed_${size}.webp`;
+            await uploadToS3(resizedImageBuffer, key);
+            return getSignedUrl(key);
+        }));
+
+        const img_link = getSignedUrl(originalKey);
+        const com_img_link=compressedUrls[0]
+        const query = 'INSERT INTO Post (img_link,com_img_link,user_id) VALUES (?,?,?)';
+        const values = [img_link,com_img_link,user_id];
         await executeQuery(query, values);
 
         const updateUserQuery = 'UPDATE User SET no_of_posts = no_of_posts + 1 WHERE user_id = ?';

@@ -1,10 +1,11 @@
 const express=require("express")
 const { createPost, updatePost, deletePost, getOnePost, getAllPostsOfOneUser, likePost, commentOnPost, deleteComment, getAllCommentsOnAPost } = require("../controllers/postController")
+const upload = require("../middlewares/multerService")
 
 
 const router=express.Router()
 
-router.route("/create/:user_id").post(createPost)
+router.route("/create/:user_id").post(upload.single("image"),createPost)
 router.route("/update/:user_id/:post_id").post(updatePost)
 router.route("/delete/:user_id/:post_id").delete(deletePost)
 router.route("/getOne/:post_id").get(getOnePost)

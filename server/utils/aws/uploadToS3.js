@@ -4,7 +4,7 @@ exports.uploadToS3 = async (buffer, key) => {
 
     try {
         const client = new S3Client();
-
+        
         const params = {
             Bucket: process.env.AWS_BUCKET_NAME,
             Key: key,

@@ -25,7 +25,7 @@ exports.sendFollowRequest = async (req, res, next) => {
         const updatePendingFollowRequestsQuery = 'UPDATE User SET pending_follow_requests = ? WHERE user_id = ?';
         await executeQuery(updatePendingFollowRequestsQuery, [pendingRequests, receiver_id]);
 
-        res.status(200).json({ message: 'Follow request sent successfully' });
+        return res.status(200).json({ success: true, message: 'Follow request sent successfully' });
     } catch (error) {
         next(error);
     }
@@ -88,7 +88,7 @@ exports.acceptFollowRequest = async (req, res, next) => {
         const incrementFollowersQuery = 'UPDATE User SET no_of_followers = no_of_followers + 1 WHERE user_id = ?';
         await executeQuery(incrementFollowersQuery, [receiver_id]);
 
-        res.status(200).json({ message: 'Follow request accepted successfully' });
+        return res.status(200).json({ success: true, message: 'Follow request accepted successfully' });
     } catch (error) {
         next(error);
     }
@@ -119,7 +119,7 @@ exports.rejectFollowRequest = async (req, res, next) => {
         const removePendingFollowRequestQuery = 'UPDATE User SET pending_follow_requests = ? WHERE user_id = ?';
         await executeQuery(removePendingFollowRequestQuery, [resultString, receiver_id]);
 
-        res.status(200).json({ message: 'Follow request rejected successfully' });
+        return res.status(200).json({ success: true, message: 'Follow request rejected successfully' });
     } catch (error) {
         next(error);
     }
@@ -162,7 +162,7 @@ exports.unFollow = async (req, res, next) => {
         const decrementFollowersQuery = 'UPDATE User SET no_of_followers = no_of_followers - 1 WHERE user_id = ?';
         await executeQuery(decrementFollowersQuery, [respondent_id]);
 
-        res.status(200).json({ message: 'Unfollowed successfully' });
+        return res.status(200).json({ success: true, message: 'Unfollowed successfully' });
     } catch (error) {
         next(error);
     }
@@ -181,7 +181,7 @@ exports.getFollowers = async (req, res, next) => {
         const getFollowersQuery='SELECT u.user_id, u.name, u.user_name FROM User u WHERE FIND_IN_SET(u.user_id, (SELECT accepted_followers FROM User WHERE user_id = ?));'
         let followers=await executeQuery(getFollowersQuery,[user_id])
 
-        res.status(200).json(followers);
+        return res.status(200).json({success: true, message:"Followers fetched",followers});
     } catch (error) {
         next(error);
     }
@@ -194,7 +194,7 @@ exports.getFollowing = async (req, res, next) => {
         const getFollowingQuery='SELECT u.user_id, u.name, u.user_name FROM User u WHERE FIND_IN_SET(u.user_id, (SELECT following FROM User WHERE user_id = ?));'
         let following=await executeQuery(getFollowingQuery,[user_id])
 
-        res.status(200).json(following);
+        return res.status(200).json({success: true, message:"Following fetched",following});
     } catch (error) {
         next(error);
     }

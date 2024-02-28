@@ -28,7 +28,7 @@ exports.signUpUser = async (req, res, next) => {
 
         await executeQuery(sql, values);
 
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             msg: "User creation successful",
         });

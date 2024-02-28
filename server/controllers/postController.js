@@ -12,7 +12,7 @@ exports.createPost = async (req, res, next) => {
         const updateUserValues = [user_id];
         await executeQuery(updateUserQuery, updateUserValues);
 
-        res.status(201).json({ message: 'Post created successfully' });
+        return res.status(201).json({ success: true, message: 'Post created successfully' });
     } catch (error) {
         next(error);
     }
@@ -52,7 +52,7 @@ exports.deletePost = async (req, res, next) => {
 
         await executeQuery('COMMIT');
 
-        res.status(200).json({ message: 'Post, associated comments, and likes deleted successfully' });
+        return res.status(200).json({ success: true, message: 'Post, associated comments, and likes deleted successfully' });
     } catch (error) {
         await executeQuery('ROLLBACK');
         next(error);
@@ -67,7 +67,7 @@ exports.updatePost = async (req, res, next) => {
         const query = 'UPDATE Post SET img_link = ? WHERE post_id = ? AND user_id = ?';
         const values = [img_link, no_of_likes, JSON.stringify(multiple_comment_ids), post_id, user_id];
         await executeQuery(query, values);
-        res.status(200).json({ message: 'Post updated successfully' });
+        return res.status(200).json({ success: true, message: 'Post updated successfully' });
     } catch (error) {
         next(error);
     }
@@ -79,7 +79,7 @@ exports.getOnePost = async (req, res, next) => {
         const query = 'SELECT * FROM Post WHERE post_id = ?';
         const values = [post_id];
         const post = await executeQuery(query, values);
-        res.status(200).json(post);
+        return res.status(200).json({success: true, post});
     } catch (error) {
         next(error);
     }
@@ -91,7 +91,7 @@ exports.getAllPostsOfOneUser = async (req, res, next) => {
         const query = 'SELECT * FROM Post WHERE user_id = ?';
         const values = [user_id];
         const posts = await executeQuery(query, values);
-        res.status(200).json(posts);
+        return res.status(200).json({success: true, posts});
     } catch (error) {
         next(error);
     }
@@ -130,7 +130,7 @@ exports.likePost = async (req, res, next) => {
             await executeQuery(updateLikesQuery, [post_id]);
         }
 
-        res.status(200).json({ message});
+        return res.status(200).json({ success: true, message});
     } catch (error) {
         next(error);
     }
@@ -149,7 +149,7 @@ exports.commentOnPost = async (req, res, next) => {
         const updateCommentsValues = [post_id];
         await executeQuery(updateCommentsQuery, updateCommentsValues);
 
-        res.status(201).json({ message: 'Comment added successfully' });
+        return res.status(201).json({ success: true, message: 'Comment added successfully' });
     } catch (error) {
         next(error);
     }
@@ -177,7 +177,7 @@ exports.deleteComment = async (req, res, next) => {
         const updatePostQuery = 'UPDATE Post SET no_of_comments = no_of_comments - 1 WHERE post_id = ?';
         await executeQuery(updatePostQuery, [comment.post_id]);
 
-        res.status(200).json({ message: 'Comment deleted successfully' });
+        return res.status(200).json({ success: true, message: 'Comment deleted successfully' });
     } catch (error) {
         next(error);
     }
@@ -189,7 +189,7 @@ exports.getAllCommentsOnAPost = async (req, res, next) => {
         const query = 'SELECT * FROM Comment WHERE post_id = ?';
         const values = [post_id];
         const comments = await executeQuery(query, values);
-        res.status(200).json(comments);
+        return res.status(200).json({success: true, comments});
     } catch (error) {
         next(error);
     }

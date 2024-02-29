@@ -1,0 +1,5 @@
+.input-placeholder::placeholder {
+    color:#636363;
+    font-family: sans-serif;
+    margin-left:10px;
+}

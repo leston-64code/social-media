@@ -1,8 +1,63 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { SiLoop } from "react-icons/si";
 import "./style.css"
+import { useState } from "react";
+import axios from 'axios'
+import toast from 'react-hot-toast'
+import Swal from "sweetalert2";
 
 const Register = () => {
+
+  const navigate = useNavigate()
+
+  const [name, setName] = useState(null)
+  const [username, setUserName] = useState(null)
+  const [email, setEmail] = useState(null)
+  const [password, setPassword] = useState(null)
+  const [confirmPassword, setConfirmPassword] = useState(null)
+
+  const [loading, setLoading] = useState(false)
+
+  async function handleSignUp() {
+    setLoading(true)
+    if (!name || !username || !email || !password || !confirmPassword) {
+      setLoading(false)
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Please enter all fields'
+      });
+    }
+
+    if (confirmPassword !== password) {
+      setLoading(false)
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: "Passwords don't match"
+      });
+    }
+
+    await axios.post(`${process.env.REACT_APP_BASE_URL}/api/auth/signup`, { name, userName: username, email, password }).then((res) => {
+      if (res.data.success === true) {
+        setLoading(false)
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: "User created successfully"
+        });
+        navigate("/home/profile")
+      }
+    }).catch((error) => {
+      setLoading(false)
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: "An error occured"
+      });
+    })
+  }
+
   return (
     <div className='w-screen h-screen flex flex-row'>
 
@@ -25,26 +80,26 @@ const Register = () => {
                 <p className='inline-block'>Existing user.&nbsp;</p>
                 <Link to="/" className='font-semibold text-[#1A5ACC] hover:underline inline-block'>Login?</Link>
 
-                <form className="space-y-4 md:space-y-6" action="#">
+                <div className="space-y-4 md:space-y-6" >
 
                   <div>
-                    <input type="text" name="name" id="name" className="auth-inputs" placeholder="Full name" required="" />
+                    <input type="text" name="name" id="name" className="auth-inputs" placeholder="Full name" required="" value={name} onChange={(e) => { setName(e.target.value) }} />
                   </div>
 
                   <div>
-                    <input type="text" name="name" id="nmae" placeholder="Username" className="auth-inputs" required="" />
+                    <input type="text" name="username" id="username" placeholder="Username" className="auth-inputs" required="" value={username} onChange={(e) => { setUserName(e.target.value) }} />
                   </div>
 
                   <div>
-                    <input type="email" name="email" id="email" className="auth-inputs" placeholder="Email Address" required="" />
+                    <input type="email" name="email" id="email" className="auth-inputs" placeholder="Email Address" required="" value={email} onChange={(e) => { setEmail(e.target.value) }} />
                   </div>
 
                   <div>
-                    <input type="password" name="password" id="password" placeholder="Enter Password" className="auth-inputs" required="" />
+                    <input type="password" name="password" id="password" placeholder="Enter Password" className="auth-inputs" required="" value={password} onChange={(e) => { setPassword(e.target.value) }} />
                   </div>
 
                   <div>
-                    <input type="password" name="cpassword" id="cpassword" placeholder="Confirm Password" className="auth-inputs" required="" />
+                    <input type="password" name="cpassword" id="cpassword" placeholder="Confirm Password" className="auth-inputs" required="" value={confirmPassword} onChange={(e) => { setConfirmPassword(e.target.value) }} />
                   </div>
 
                   {/* <div className="flex items-center justify-between">
@@ -63,7 +118,15 @@ const Register = () => {
                     </div> */}
 
                   <div className='items-center justify-center text-center'>
-                    <button type="submit" className="w-[50%] m-auto text-white bg-[#1A5ACC] font-medium rounded-md text-sm px-5 py-2.5 mt-3 text-center hover:shadow-lg">SignUp</button>
+                    <button className="w-[50%] m-auto text-white bg-[#1A5ACC] font-medium rounded-md text-sm px-5 py-2.5 mt-3 text-center hover:shadow-lg flex flex-row justify-center" onClick={() => { handleSignUp() }}>
+                      {
+                        loading === false ? 'Signup' :
+                          <>
+                            <div className='rounded-full border-t-[2px] border-white w-5 h-5 animate-spin mr-5'></div>
+                            Signup
+                          </>
+                      }
+                    </button>
                   </div>
 
                   <div className='flex items-center'>
@@ -79,7 +142,7 @@ const Register = () => {
                     <img className='hover:shadow-md cursor-pointer' src={require("./assets/Twitter X.png")} alt="" />
                   </div>
 
-                </form>
+                </div>
               </div>
             </div>
           </div>

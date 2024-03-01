@@ -1,8 +1,51 @@
 import { SiLoop } from "react-icons/si"
 import "./style.css"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { useState } from "react"
+import Swal from "sweetalert2"
+import axios from "axios"
 
 const Login = () => {
+
+  const navigate = useNavigate()
+
+  const [email, setEmail] = useState(null)
+  const [password, setPassword] = useState(null)
+
+
+  const [loading, setLoading] = useState(false)
+
+  async function handleLogin() {
+    setLoading(true)
+    if ( !email || !password ) {
+      setLoading(false)
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Please enter all fields'
+      });
+    }
+
+    await axios.post(`${process.env.REACT_APP_BASE_URL}/api/auth/login`, { email, password }).then((res) => {
+      if (res.data.success === true) {
+        setLoading(false)
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: "Logged in successfully"
+        });
+        navigate("/home/profile")
+      }
+    }).catch((error) => {
+      setLoading(false)
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: "An error occured"
+      });
+    })
+  }
+
   return (
     <>
       <div className='w-screen flex flex-row'>
@@ -26,14 +69,14 @@ const Login = () => {
                   <p className='inline-block'>New to xeroscape.&nbsp;</p>
                   <Link to="/register" className='font-semibold text-[#1A5ACC] hover:underline inline-block'>Create an account?</Link>
 
-                  <form className="space-y-4 md:space-y-6" action="#">
+                  <div className="space-y-4 md:space-y-6">
 
                     <div>
-                      <input type="email" name="email" id="email" className="auth-inputs" placeholder="Email Address" required="" />
+                      <input type="email" name="email" id="email" className="auth-inputs" placeholder="Email Address" required="" value={email} onChange={(e) => { setEmail(e.target.value) }} />
                     </div>
 
                     <div>
-                      <input type="password" name="password" id="password" placeholder="Enter Password" className="auth-inputs" required="" />
+                      <input type="password" name="password" id="password" placeholder="Enter Password" className="auth-inputs" required="" value={password} onChange={(e) => { setPassword(e.target.value) }} />
                     </div>
 
                     <div className="flex items-center justify-between">
@@ -54,7 +97,15 @@ const Login = () => {
                     <div className='items-center justify-center text-center'>
 
                       {/* <p className='text-[#8C8C8C] text-sm font-semibold text-left'>If needed, inform users about the use of a CAPTCHA or reCAPTCHA system for added security.</p> */}
-                      <button type="submit" className="w-[50%] m-auto text-white bg-[#1A5ACC] font-medium rounded-md text-sm px-5 py-2.5 mt-3 text-center hover:shadow-lg">Login</button>
+                      <button className="w-[50%] m-auto text-white bg-[#1A5ACC] font-medium rounded-md text-sm px-5 py-2.5 mt-3 text-center hover:shadow-lg flex flex-row justify-center" onClick={() => { handleLogin()}} >
+                        {
+                          loading === false ? 'Login' :
+                            <>
+                              <div className='rounded-full border-t-[2px] border-white w-5 h-5 animate-spin mr-5'></div>
+                              Login
+                            </>
+                        }
+                      </button>
 
                     </div>
 
@@ -71,7 +122,7 @@ const Login = () => {
                       <img className='hover:shadow-md cursor-pointer' src={require("./assets/Twitter X.png")} alt="" />
                     </div>
 
-                  </form>
+                  </div>
                 </div>
               </div>
             </div>

@@ -2,10 +2,81 @@ import React, { useState } from 'react'
 import Swal from 'sweetalert2'
 import { MdAddAPhoto } from "react-icons/md";
 import UserListModal from '../components/UserListModal'
+import "./style.css"
 
 const ProfilePage = () => {
     const [followersModal, setFollowersModal] = useState(false)
     const [followingModal, setFollowingModal] = useState(false)
+
+    const handleUpload = async (file) => {
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch('/api/uploadProfilePicture', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                 
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'Profile picture uploaded successfully'
+                    });
+                } else {
+                  
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: data.message || 'An error occurred while uploading the profile picture'
+                    });
+                }
+            } else {
+                
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to upload profile picture. Please try again later.'
+                });
+            }
+        } catch (error) {
+            
+            console.error('Error uploading profile picture:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to upload profile picture. Please check your internet connection and try again.'
+            });
+        }
+    };
+
+    const handleUploadButtonClick = async () => {
+        try {
+            const { value: file } = await Swal.fire({
+                title: 'Select image',
+                input: 'file',
+                inputAttributes: {
+                    accept: 'image/*',
+                    'aria-label': 'Upload your profile picture'
+                }
+            });
+
+            if (file) {
+                handleUpload(file);
+            }
+        } catch (error) {
+            console.error('Error selecting file:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to select file. Please try again.'
+            });
+        }
+    };
 
     return (
         <>
@@ -16,9 +87,9 @@ const ProfilePage = () => {
                 followingModal === true ? <UserListModal closeModal={setFollowingModal} /> : null
             }
 
-            <div className="w-full h-[250px]" style={{ "backgroundImage": "linear-gradient(to top, #6a85b6 0%, #bac8e0 100%)" }}>
-
-                {/* <img src="https://vojislavd.com/ta-template-demo/assets/img/profile-background.jpg" className="w-full h-full rounded-tl-lg rounded-tr-lg" /> */}
+            <div className="w-full h-[250px] backgoundSVG" >
+                {/* style={{ "backgroundImage": "linear-gradient(to top, #6a85b6 0%, #bac8e0 100%)" }} */}
+                {/* <img src={require("./wave-haikei (2).svg")} /> */}
             </div>
 
 
@@ -50,7 +121,7 @@ const ProfilePage = () => {
                     <div className='flex flex-row bg-blue-0 mt-5 pl-12'>
                         <button type="button" class="text-green-700 hover:text-white border border-green-700 hover:bg-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 ">Follow</button>
                         <button type="button" class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Edit Profile</button>
-                        <button type="button" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2" onClick={async () => {
+                        {/* <button type="button" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2" onClick={async () => {
                             const { value: file } = await Swal.fire({
                                 title: "Select image",
                                 input: "file",
@@ -70,33 +141,34 @@ const ProfilePage = () => {
                                 };
                                 reader.readAsDataURL(file);
                             }
-                        }}>Upload Profile Picture</button>
+                        }}>Upload Profile Picture</button> */}
+                        <button type="button" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2" onClick={handleUploadButtonClick}>Upload Profile Picture</button>
                     </div>
                 </div>
             </div>
 
             <div className='w-full items-center flex justify-center'>
-            <button type="button" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 flex align-middle" onClick={async () => {
-                const { value: file } = await Swal.fire({
-                    title: "Select an image",
-                    input: "file",
-                    inputAttributes: {
-                        "accept": "image/*",
-                        "aria-label": "Upload your post"
+                <button type="button" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 flex align-middle" onClick={async () => {
+                    const { value: file } = await Swal.fire({
+                        title: "Select an image",
+                        input: "file",
+                        inputAttributes: {
+                            "accept": "image/*",
+                            "aria-label": "Upload your post"
+                        }
+                    });
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            Swal.fire({
+                                title: "Your uploaded post",
+                                imageUrl: e.target.result,
+                                imageAlt: "The uploaded picture"
+                            });
+                        };
+                        reader.readAsDataURL(file);
                     }
-                });
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        Swal.fire({
-                            title: "Your uploaded post",
-                            imageUrl: e.target.result,
-                            imageAlt: "The uploaded picture"
-                        });
-                    };
-                    reader.readAsDataURL(file);
-                }
-            }}>Create a post <MdAddAPhoto className='inline-block text-xl ml-3'/></button>
+                }}>Create a post <MdAddAPhoto className='inline-block text-xl ml-3' /></button>
             </div>
 
             <div className='w-[65%] h-auto m-auto mt-10  flex flex-row flex-wrap'>

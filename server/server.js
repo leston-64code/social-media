@@ -3,8 +3,14 @@ const helmet = require("helmet")
 require("dotenv").config()
 const createTables = require('./config/startupQuery');
 const connection = require('./config/db');
+const cors=require("cors")
 
 const app = express()
+
+app.use(cors({
+  origin: `${process.env.CLIENT_ADDRESS}`,
+  credentials: true,
+}))
 
 app.use(express.json())
 app.use(helmet())

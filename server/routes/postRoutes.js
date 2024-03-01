@@ -5,7 +5,7 @@ const upload = require("../middlewares/multerService")
 
 const router=express.Router()
 
-router.route("/create/:user_id").post(upload.single("image"),createPost)
+router.route("/create/:user_id").post(upload.single("file"),createPost)
 router.route("/update/:user_id/:post_id").post(updatePost)
 router.route("/delete/:user_id/:post_id").delete(deletePost)
 router.route("/getOne/:post_id").get(getOnePost)

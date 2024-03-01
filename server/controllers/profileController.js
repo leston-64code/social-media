@@ -42,7 +42,7 @@ exports.uploadProfilePicture = async (req, res, next) => {
 exports.removeProfilePicture = async (req, res, next) => {
     try {
         const user_id = req.params.user_id;
-        const sql = `UPDATE User SET profile_pic_link = NULL WHERE id = ?`;
+        const sql = `UPDATE User SET profile_pic_link = NULL WHERE user_id = ?`;
         await executeQuery(sql, [user_id]);
         return res.status(200).json({ success: true, message: "Profile picture removed" });
     } catch (error) {
@@ -53,7 +53,7 @@ exports.removeProfilePicture = async (req, res, next) => {
 exports.getUserProfile = async (req, res, next) => {
     try {
         const user_id = req.params.user_id;
-        const sql = `SELECT * FROM User WHERE id = ?`;
+        const sql = `SELECT * FROM User WHERE user_id = ?`;
         const user = await executeQuery(sql, [user_id]);
         return res.status(200).json({ success: true, user: user[0] });
     } catch (error) {
@@ -64,11 +64,15 @@ exports.getUserProfile = async (req, res, next) => {
 exports.getFullUserProfile = async (req, res, next) => {
     try {
         const user_id = req.params.user_id;
+       
+        if(user_id === 'null'){
+            return res.status(200).json({ success :false, message:"No profile found"})
+        }
 
-        const sql = `SELECT * FROM User WHERE id = ?`;
+        const sql = `SELECT * FROM User WHERE user_id = ?`;
         const user = await executeQuery(sql, [user_id]);
 
-        const postsSql = 'SELECT post_id, img_link FROM Post WHERE user_id = ?';
+        const postsSql = 'SELECT post_id, com_img_link FROM Post WHERE user_id = ?';
         const posts = await executeQuery(postsSql, [user_id]);
 
         const fullProfile = {

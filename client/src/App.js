@@ -6,6 +6,7 @@ import ProfilePage from './modules/user/ProfilePage';
 import Camera from './modules/components/Camera';
 import MainLayout from './layout/MainLayout';
 import HomePage from './modules/pages/HomePage';
+import SettingUp from './modules/components/SettingUp';
 
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
           <Route path='/home' element={<MainLayout />} >
             <Route index element={<HomePage />} />
             <Route path="profile" element={<ProfilePage />} />
+            <Route path="setting" element={<SettingUp />} />
             {/* <Route path="fst" element={<Fst />} /> */}
           </Route>
             {/* <Route path="/profile" element={<ProfilePage />} /> */}

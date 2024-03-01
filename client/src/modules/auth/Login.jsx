@@ -9,8 +9,8 @@ const Login = () => {
 
   const navigate = useNavigate()
 
-  const [email, setEmail] = useState(null)
-  const [password, setPassword] = useState(null)
+  const [email, setEmail] = useState("leston@gamil.com")
+  const [password, setPassword] = useState("987654321")
 
 
   const [loading, setLoading] = useState(false)
@@ -34,7 +34,8 @@ const Login = () => {
           title: 'Success',
           text: "Logged in successfully"
         });
-        navigate("/home/profile")
+        localStorage.setItem("user_id",res.data.user.user_id)
+        navigate("/home/setting")
       }
     }).catch((error) => {
       setLoading(false)

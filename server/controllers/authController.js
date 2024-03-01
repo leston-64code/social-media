@@ -27,10 +27,13 @@ exports.signUpUser = async (req, res, next) => {
         const values = [name, email, hashedPassword, userName];
 
         await executeQuery(sql, values);
+        
+        let user=await executeQuery('SELECT * FROM User where email= ? ;',[email])
 
         return res.status(200).json({
             success: true,
             msg: "User creation successful",
+            user:user[0]
         });
     } catch (error) {
         res.status(500).json({ error: 'Failed to create user' });

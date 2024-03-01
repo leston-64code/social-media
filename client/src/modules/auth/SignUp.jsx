@@ -46,7 +46,8 @@ const Register = () => {
           title: 'Success',
           text: "User created successfully"
         });
-        navigate("/home/profile")
+        localStorage.setItem("user_id",res.data.user.user_id)
+        navigate("/home/setting")
       }
     }).catch((error) => {
       setLoading(false)

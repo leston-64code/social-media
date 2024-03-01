@@ -9,7 +9,7 @@ const Login = () => {
 
         <div className='w-[80%] max-h-full hidden lg:flex justify-evenly items-center bg-gray-200'>
           <SiLoop className="w-[200px] h-[200px] align-middle animate-spin text-red-500" />
-          <p className="text-6xl font-bold animate-bounce">LinkLoop</p>
+          <p className="text-6xl font-bold">LinkLoop</p>
         </div>
 
         <div className='w-[60%] h-[100%] bg-red-5 flex-auto'>

@@ -7,21 +7,24 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { loadingtoastOptions, successtoastOptions } from '../../utils/toastOptions';
 import Loading from '../components/Loading';
+import PostModal from '../components/PostModal';
 
 
 const ProfilePage = () => {
 
     const [followersModal, setFollowersModal] = useState(false)
     const [followingModal, setFollowingModal] = useState(false)
+    const [showPostModal, setShowPostModal] = useState(false)
 
-    const [userProfile,setUserProfile]=useState(null)
-    const [posts,setPosts]=useState(null)
+    const [userProfile, setUserProfile] = useState(null)
+    const [posts, setPosts] = useState(null)
 
     const [loading, setLoading] = useState(true)
+    const [postData, setPostData] = useState(null)
 
     async function getFullProfile() {
         setLoading(true)
-        const loading = toast.loading('Please wait...',loadingtoastOptions);
+        const loading = toast.loading('Please wait...', loadingtoastOptions);
         try {
             await axios.get(`${process.env.REACT_APP_BASE_URL}/api/profile/getfullprofile/${localStorage.getItem("user_id")}`).then((res) => {
                 if (res.data.success === true) {
@@ -30,7 +33,7 @@ const ProfilePage = () => {
                     setLoading(false)
                     toast.success('Profile fetched', successtoastOptions);
                     toast.dismiss(loading)
-                }else{
+                } else {
                     setLoading(false)
                     toast.error('Could not fetch', successtoastOptions);
                     toast.dismiss(loading)
@@ -118,7 +121,7 @@ const ProfilePage = () => {
         }
     };
 
-    
+
     const handlePostUpload = async (file) => {
         try {
             const formData = new FormData();
@@ -189,9 +192,9 @@ const ProfilePage = () => {
         }
     };
 
-    useEffect(()=>{
+    useEffect(() => {
         getFullProfile()
-    },[])
+    }, [])
 
     return (
         <>
@@ -200,6 +203,9 @@ const ProfilePage = () => {
             }
             {
                 followingModal === true ? <UserListModal closeModal={setFollowingModal} /> : null
+            }
+            {
+                showPostModal === true ? <PostModal setShowPostModal={setShowPostModal} postData={postData} setPostData={setPostData}/> : null
             }
 
             {
@@ -219,30 +225,30 @@ const ProfilePage = () => {
                             <div className='md:w-[35%] w-[100%] bg-blue-00 flex flex-col justify-center items-center'>
                                 {
                                     userProfile?.compressed_full_pic !== null ?
-                                    <img src={userProfile?.compressed_full_pic} className="md:ml-[10%] md:w-64 md:h-64 w-28 h-28 border-4 border-white rounded-full" alt="" style={{ objectFit: 'cover' }} />
-                                    : 
-                                    <img className="ml-[10%] w-64 border-4 border-white rounded-full" src={require("./assets/useicon.webp")} alt="" />
+                                        <img src={userProfile?.compressed_full_pic} className="md:ml-[10%] md:w-64 md:h-64 w-28 h-28 border-4 border-white rounded-full" alt="" style={{ objectFit: 'cover' }} />
+                                        :
+                                        <img className="ml-[10%] w-64 border-4 border-white rounded-full" src={require("./assets/useicon.webp")} alt="" />
                                 }
-                                <p className='text-2xl mt-2 font-semibold  w-full text-center text-white'>{userProfile?.name}Leston Aaron Salis</p>
+                                <p className='text-2xl mt-2 font-semibold  w-full text-center text-white'>{userProfile?.name}</p>
                             </div>
                             <div className='md:w-[65%] w-[100%] bg-red-00 '>
 
                                 <div className='flex flex-row mt-10' >
                                     <div className='w-44 h-28 md:ml-8 border-[1px] border-lack flex md:flex-col flex-col-reverse items-center justify-center rounded-lg shadow-md md:bg-white md:text-black text-white bg-black border-none'>
                                         <p className='text-gray-600 text-md font-semibold'>Posts</p>
-                                        <p className='text-white md:text-black font-bold text-4xl'>{userProfile?.no_of_posts}5</p>
+                                        <p className='text-white md:text-black font-bold text-4xl'>{userProfile?.no_of_posts}</p>
                                     </div>
                                     <div className='w-44 h-28 md:ml-8 border-[1px] border-lack flex md:flex-col flex-col-reverse items-center justify-center rounded-lg shadow-md md:bg-white md:text-black text-white bg-black border-none hover:cursor-pointer' onClick={() => {
                                         setFollowersModal(true)
                                     }}>
                                         <p className='text-gray-600 text-md font-semibold'>Followers</p>
-                                        <p className='text-white md:text-black font-bold text-4xl'>{userProfile?.no_of_followers}74</p>
+                                        <p className='text-white md:text-black font-bold text-4xl'>{userProfile?.no_of_followers}</p>
                                     </div>
                                     <div className='w-44 h-28 md:ml-8 border-[1px] border-lack flex md:flex-col flex-col-reverse items-center justify-center rounded-lg shadow-md md:bg-white md:text-black text-white bg-black border-none hover:cursor-pointer' onClick={() => {
                                         setFollowingModal(true)
                                     }}>
                                         <p className='text-gray-600 text-md font-semibold'>Follwing</p>
-                                        <p className='text-white md:text-black font-bold text-4xl'>{userProfile?.no_of_following}98</p>
+                                        <p className='text-white md:text-black font-bold text-4xl'>{userProfile?.no_of_following}</p>
                                     </div>
                                 </div>
                                 <div className='flex flex-row flex-wrap bg-blue-0 mt-5 md:pl-12 md:justify-normal justify-center'>
@@ -254,7 +260,7 @@ const ProfilePage = () => {
                         </div>
 
                         <div className='w-full items-center flex justify-center'>
-                            <button type="button" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 flex align-middle" onClick={()=>{
+                            <button type="button" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 flex align-middle" onClick={() => {
                                 handlePostUploadButtonClick()
                             }}>Create a post <MdAddAPhoto className='inline-block text-xl ml-3' /></button>
                         </div>
@@ -262,8 +268,12 @@ const ProfilePage = () => {
                         <div className='w-[65%] h-auto m-auto mt-10  flex flex-row flex-wrap mb-10 items-center justify-center'>
                             {
                                 posts?.map((ele, index) => {
-                                    return <div className='border-[1px] border-black w-36 h-36'>
-                                            <img className='w-[100%] h-[100%]' style={{"objectFit":"cover"}} src={ele.com_img_link} alt="" />
+                                    return <div className='border-[1px] border-black w-36 h-36' key={index} onClick={() => {
+                                        setShowPostModal(true)
+                                        setPostData(ele)
+                                    }}>
+
+                                        <img className='w-[100%] h-[100%]' style={{ "objectFit": "cover" }} src={ele.com_img_link} alt="" />
                                     </div>
                                 })
                             }

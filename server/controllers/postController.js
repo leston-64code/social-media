@@ -254,4 +254,31 @@ exports.getAllCommentsOnAPost = async (req, res, next) => {
     }
 }
 
+// Assuming you have a database connection pool initialized and available as `pool`
+
+exports.getUsersWhoLikedPost = async (req, res, next) => {
+    try {
+        const {post_id}=req.params
+        const query = `
+            SELECT 
+                Likes.like_id,
+                User.name,
+                User.user_name,
+                User.email,
+                User.compressed_full_pic
+            FROM 
+                Likes 
+            INNER JOIN 
+                User 
+            ON 
+                Likes.user_id = User.user_id
+            WHERE 
+                Likes.post_id = ?`;
+        const values = [post_id];
+        const likes = await executeQuery(query, values);
+        return res.status(200).json({ success: true, likes })
+    } catch (error) {
+        throw error;
+    }
+};
 

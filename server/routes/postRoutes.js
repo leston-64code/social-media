@@ -1,5 +1,5 @@
 const express=require("express")
-const { createPost, updatePost, deletePost, getOnePost, getAllPostsOfOneUser, likePost, commentOnPost, deleteComment, getAllCommentsOnAPost } = require("../controllers/postController")
+const { createPost, updatePost, deletePost, getOnePost, getAllPostsOfOneUser, likePost, commentOnPost, deleteComment, getAllCommentsOnAPost, getUsersWhoLikedPost } = require("../controllers/postController")
 const upload = require("../middlewares/multerService")
 
 
@@ -12,6 +12,7 @@ router.route("/getOne/:post_id").get(getOnePost)
 router.route("/getall/:user_id").get(getAllPostsOfOneUser)
 
 router.route("/likepost/:user_id/:post_id").post(likePost)
+router.route("/getlikeusers/:post_id").get(getUsersWhoLikedPost)
 
 router.route("/createcomment/:user_id/:post_id").post(commentOnPost)
 router.route("/deletecomment/:user_id/:comment_id").delete(deleteComment)

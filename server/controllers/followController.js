@@ -178,7 +178,7 @@ exports.getFollowers = async (req, res, next) => {
         // const getFollowersQuery='SELECT user_id, name, user_name FROM User WHERE FIND_IN_SET(?,?);'
         // let followers=await executeQuery(getFollowersQuery,[user_id,result[0].accepted_followers])
 
-        const getFollowersQuery='SELECT u.user_id, u.name, u.user_name FROM User u WHERE FIND_IN_SET(u.user_id, (SELECT accepted_followers FROM User WHERE user_id = ?));'
+        const getFollowersQuery='SELECT u.user_id, u.name, u.user_name, u.email, u.compressed_full_pic FROM User u WHERE FIND_IN_SET(u.user_id, (SELECT accepted_followers FROM User WHERE user_id = ?));'
         let followers=await executeQuery(getFollowersQuery,[user_id])
 
         return res.status(200).json({success: true, message:"Followers fetched",followers});
@@ -191,7 +191,7 @@ exports.getFollowing = async (req, res, next) => {
     try {
         const user_id = req.params.user_id;
         
-        const getFollowingQuery='SELECT u.user_id, u.name, u.user_name FROM User u WHERE FIND_IN_SET(u.user_id, (SELECT following FROM User WHERE user_id = ?));'
+        const getFollowingQuery='SELECT u.user_id, u.name, u.user_name, u.email, u.compressed_full_pic FROM User u WHERE FIND_IN_SET(u.user_id, (SELECT following FROM User WHERE user_id = ?));'
         let following=await executeQuery(getFollowingQuery,[user_id])
 
         return res.status(200).json({success: true, message:"Following fetched",following});
@@ -200,3 +200,29 @@ exports.getFollowing = async (req, res, next) => {
     }
 }
 
+exports.getPendingRequests=async(req,res,next)=>{
+    try {
+        const {receiver_id}=req.params
+        const query = `
+            SELECT 
+                FollowRequest.*, 
+                User.user_id, 
+                User.name, 
+                User.email, 
+                User.compressed_full_pic 
+            FROM 
+                FollowRequest 
+            INNER JOIN 
+                User 
+            ON 
+                FollowRequest.requester_id = User.user_id 
+            WHERE 
+                FollowRequest.receiver_id = ? 
+            AND 
+                FollowRequest.status = 'pending';`;
+        let pending=await executeQuery(query,[receiver_id])
+        return res.status(200).json({success:true,message:"Pending requests fetched",pending})
+    } catch (error) {
+        next(error);
+    }
+}

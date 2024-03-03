@@ -8,12 +8,16 @@ import toast from 'react-hot-toast';
 import { loadingtoastOptions, successtoastOptions } from '../../utils/toastOptions';
 import Loading from '../components/Loading';
 import PostModal from '../components/PostModal';
+import UserRowComponent from '../components/UserRowComponent';
+import { IoCloseCircleOutline } from 'react-icons/io5';
+import UserRequestsComponent from '../components/UserRequestsComponent';
 
 
 const ProfilePage = () => {
 
     const [followersModal, setFollowersModal] = useState(false)
     const [followingModal, setFollowingModal] = useState(false)
+    const [requestsModal, setRequestsModal] = useState(false)
     const [showPostModal, setShowPostModal] = useState(false)
 
     const [userProfile, setUserProfile] = useState(null)
@@ -21,6 +25,9 @@ const ProfilePage = () => {
 
     const [loading, setLoading] = useState(true)
     const [postData, setPostData] = useState(null)
+    const [followers,setFollowers]=useState(null)
+    const [following,setFollowing]=useState(null)
+    const [requests,setRequests]=useState(null)
 
     async function getFullProfile() {
         setLoading(true)
@@ -121,7 +128,6 @@ const ProfilePage = () => {
         }
     };
 
-
     const handlePostUpload = async (file) => {
         try {
             const formData = new FormData();
@@ -192,6 +198,57 @@ const ProfilePage = () => {
         }
     };
 
+    async function getFollowers() {
+        try {
+            await axios.get(`${process.env.REACT_APP_BASE_URL}/api/follow/getfollowers/${localStorage.getItem("user_id")}`).then((res) => {
+                if (res?.data?.success === true) {
+                    setFollowers(res?.data?.followers);
+                    toast.success('Followers fetched', successtoastOptions);
+                } else {
+                    toast.error('Fetching followers failed', successtoastOptions);
+                }
+            }).catch((error) => {
+                toast.error('Fetching followers failed', successtoastOptions);
+            })
+        } catch (error) {
+            toast.error('Fetching followers failed', successtoastOptions);
+        }
+    }
+
+    async function getFollowing() {
+        try {
+            await axios.get(`${process.env.REACT_APP_BASE_URL}/api/follow/getfollowing/${localStorage.getItem("user_id")}`).then((res) => {
+                if (res?.data?.success === true) {
+                    setFollowing(res?.data?.following);
+                    toast.success('Following fetched', successtoastOptions);
+                } else {
+                    toast.error('Fetching following failed', successtoastOptions);
+                }
+            }).catch((error) => {
+                toast.error('Fetching following failed', successtoastOptions);
+            })
+        } catch (error) {
+            toast.error('Fetching following failed', successtoastOptions);
+        }
+    }
+
+    async function getPendingRequests() {
+        try {
+            await axios.get(`${process.env.REACT_APP_BASE_URL}/api/follow/getpending/${localStorage.getItem("user_id")}`).then((res) => {
+                if (res?.data?.success === true) {
+                    setRequests(res?.data?.pending);
+                    toast.success('Pending Requests fetched', successtoastOptions);
+                } else {
+                    toast.error('Fetching pending failed', successtoastOptions);
+                }
+            }).catch((error) => {
+                toast.error('Fetching pending failed', successtoastOptions);
+            })
+        } catch (error) {
+            toast.error('Fetching pending failed', successtoastOptions);
+        }
+    }
+
     useEffect(() => {
         getFullProfile()
     }, [])
@@ -199,13 +256,88 @@ const ProfilePage = () => {
     return (
         <>
             {
-                followersModal === true ? <UserListModal closeModal={setFollowersModal} /> : null
+                followersModal === true ?
+                    <div className='w-screen h-screen absolute top-0 left-0 bg-black bg-opacity-85 z-40 flex items-center'>
+                        <div className="w-[30%] m-auto h-[50%] flex flex-col bg-white rounded-xl">
+                            <div className="w-[100%] h-12 border-b-[1px] border-black flex flex-row">
+
+                                <p className="font-semibold w-full flex items-center">
+                                    <span className="w-[60%] text-right">Followers </span>
+
+                                    <span className="justify-end w-[40%] flex items-end"><IoCloseCircleOutline className='text-black font-bold hover:cursor-pointer text-2xl mr-5' onClick={() => {
+                                        setFollowersModal(false)
+                                        setFollowers(null)
+                                    }} /></span></p>
+
+                            </div>
+                            <div className="flex-1 overflow-auto ">
+                                {
+                                    followers?.map((ele, index) => {
+                                        return <UserRowComponent key={index} name={ele.name} email={ele.email} imglink={ele.compressed_full_pic} />
+                                    })
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                    : null
             }
             {
-                followingModal === true ? <UserListModal closeModal={setFollowingModal} /> : null
+                followingModal === true ?
+                    <div className='w-screen h-screen absolute top-0 left-0 bg-black bg-opacity-85 z-40 flex items-center'>
+                        <div className="w-[30%] m-auto h-[50%] flex flex-col bg-white rounded-xl">
+                            <div className="w-[100%] h-12 border-b-[1px] border-black flex flex-row">
+
+                                <p className="font-semibold w-full flex items-center">
+                                    <span className="w-[60%] text-right">Following </span>
+
+                                    <span className="justify-end w-[40%] flex items-end"><IoCloseCircleOutline className='text-black font-bold hover:cursor-pointer text-2xl mr-5' onClick={() => {
+                                        setFollowingModal(false)
+                                        setFollowing(null)
+                                    }} /></span></p>
+
+                            </div>
+                            <div className="flex-1 overflow-auto ">
+                                {
+                                    following?.map((ele, index) => {
+                                        return <UserRowComponent key={index} name={ele.name} email={ele.email} imglink={ele.compressed_full_pic} />
+                                    })
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                    : null
             }
             {
-                showPostModal === true ? <PostModal setShowPostModal={setShowPostModal} postData={postData} setPostData={setPostData} userImage={userProfile?.compressed_full_pic}/> : null
+                requestsModal === true ?
+                    <div className='w-screen h-screen absolute top-0 left-0 bg-black bg-opacity-85 z-40 flex items-center'>
+                        <div className="w-[30%] m-auto h-[50%] flex flex-col bg-white rounded-xl">
+                            <div className="w-[100%] h-12 border-b-[1px] border-black flex flex-row">
+
+                                <p className="font-semibold w-full flex items-center">
+                                    <span className="w-[60%] text-right">Pending </span>
+
+                                    <span className="justify-end w-[40%] flex items-end"><IoCloseCircleOutline className='text-black font-bold hover:cursor-pointer text-2xl mr-5' onClick={() => {
+                                        setRequestsModal(false)
+                                        setRequests(null)
+                                    }} /></span></p>
+
+                            </div>
+                            <div className="flex-1 overflow-auto ">
+                                {
+                                    requests?.map((ele, index) => {
+                                        return <UserRequestsComponent key={index} name={ele.name} email={ele.email} imglink={ele.compressed_full_pic} requester_id={ele.requester_id} setRequestsModal={setRequestsModal} setRequests={setRequests} />
+                                    })
+                                }
+                            </div>
+                        </div>
+
+                    </div>
+                    : null
+            }
+            {
+                showPostModal === true ? <PostModal setShowPostModal={setShowPostModal} postData={postData} setPostData={setPostData} userImage={userProfile?.compressed_full_pic} /> : null
             }
 
             {
@@ -215,68 +347,79 @@ const ProfilePage = () => {
                     </>
                     :
                     <>
-                        <div className="w-full h-[250px] backgoundSVG bg-black" >
-                            {/* style={{ "backgroundImage": "linear-gradient(to top, #6a85b6 0%, #bac8e0 100%)" }} */}
-                            {/* <img src={require("./wave-haikei (2).svg")} /> */}
-                        </div>
+                        <div className='maindivprofile'>
+                            {/* <div className="w-full h-[250px] backgoundSVG bg-lack" > */}
+                            <div className="w-full md:h-[210px] h-[120px] backgoundSVG bg-lack"  >
 
 
-                        <div className='flex md:flex-row flex-col  -mt-20 bg-black'>
-                            <div className='md:w-[35%] w-[100%] bg-blue-00 flex flex-col justify-center items-center'>
+                                {/* <img src={require("./wave-haikei (2).svg")} /> */}
+                            </div>
+
+
+                            <div className='flex md:flex-row flex-col  md:-mt-24 -mt-16'>
+                                <div className='md:w-[35%] w-[100%] bg-blue-00 flex flex-col justify-center items-center'>
+                                    {
+                                        userProfile?.compressed_full_pic !== null ?
+                                            <img src={userProfile?.compressed_full_pic} className="md:ml-[10%] md:w-56 md:h-56 w-28 h-28 border-4 border-white rounded-full shadow-xl" alt="" style={{ objectFit: 'cover' }} />
+                                            :
+                                            <img className="ml-[10%] w-64 border-4 border-black rounded-full" src={require("./assets/useicon.webp")} alt="" />
+                                    }
+                                    <p className='text-2xl mt-2 font-semibold  w-full text-center text-black'>{userProfile?.name}</p>
+                                </div>
+                                <div className='md:w-[65%] w-[100%] '>
+
+                                    <div className='flex flex-row mt-10' >
+                                        <div className='w-44 h-28 md:ml-8 border-[1px] border-lack flex md:flex-col flex-col-reverse items-center justify-center rounded-lg shadow-md md:bg-red-200 md:text-black  border-none'>
+                                            <p className='text-gray-600 text-md font-semibold'>Posts</p>
+                                            <p className=' md:text-black font-bold text-4xl'>{userProfile?.no_of_posts}</p>
+                                        </div>
+                                        <div className='w-44 h-28 md:ml-8 border-[1px] border-lack flex md:flex-col flex-col-reverse items-center justify-center rounded-lg shadow-md md:bg-red-200 md:text-black  border-none hover:cursor-pointer' onClick={() => {
+                                            getFollowers()
+                                            setFollowersModal(true)
+                                        }}>
+                                            <p className='text-gray-600 text-md font-semibold'>Followers</p>
+                                            <p className=' md:text-black font-bold text-4xl'>{userProfile?.no_of_followers}</p>
+                                        </div>
+                                        <div className='w-44 h-28 md:ml-8 border-[1px] border-lack flex md:flex-col flex-col-reverse items-center justify-center rounded-lg shadow-md md:bg-red-200 md:text-black  border-none hover:cursor-pointer' onClick={() => {
+                                            getFollowing()
+                                            setFollowingModal(true)
+                                        }}>
+                                            <p className='text-gray-600 text-md font-semibold'>Follwing</p>
+                                            <p className=' md:text-black font-bold text-4xl'>{userProfile?.no_of_following}</p>
+                                        </div>
+                                        
+                                    </div>
+                                    <div className='flex flex-row flex-wrap bg-blue-0 mt-5 md:pl-12 md:justify-normal justify-center'>
+                                        {/* <button type="button" class="text-green-700 hover:text-white border border-green-700 hover:bg-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 ">Follow</button> */}
+                                        <button type="button" class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Edit Profile</button>
+                                        <button type="button" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2" onClick={handleUploadButtonClick}>Upload Profile Picture</button>
+                                        <button type="button" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2" onClick={()=>{
+                                            getPendingRequests()
+                                            setRequestsModal(true)
+                                        }}>Pending Requests</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className='w-full items-center flex justify-center '>
+                                <button type="button" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 flex align-middle" onClick={() => {
+                                    handlePostUploadButtonClick()
+                                }}>Create a post <MdAddAPhoto className='inline-block text-xl ml-3' /></button>
+                            </div>
+
+                            <div className='md:w-[65%] w-full h-auto m-auto mt-10  flex flex-row flex-wrap mb-10 items-center justify-center '>
                                 {
-                                    userProfile?.compressed_full_pic !== null ?
-                                        <img src={userProfile?.compressed_full_pic} className="md:ml-[10%] md:w-64 md:h-64 w-28 h-28 border-4 border-white rounded-full" alt="" style={{ objectFit: 'cover' }} />
-                                        :
-                                        <img className="ml-[10%] w-64 border-4 border-white rounded-full" src={require("./assets/useicon.webp")} alt="" />
+                                    posts?.map((ele, index) => {
+                                        return <div className='border-[1px] border-black md:w-56 md:h-56 w-28 h-28' key={index} onClick={() => {
+                                            setShowPostModal(true)
+                                            setPostData(ele)
+                                        }}>
+
+                                            <img className='w-[100%] h-[100%]' style={{ "objectFit": "cover" }} src={ele.com_img_link} alt="" />
+                                        </div>
+                                    })
                                 }
-                                <p className='text-2xl mt-2 font-semibold  w-full text-center text-white'>{userProfile?.name}</p>
                             </div>
-                            <div className='md:w-[65%] w-[100%] bg-red-00 '>
-
-                                <div className='flex flex-row mt-10' >
-                                    <div className='w-44 h-28 md:ml-8 border-[1px] border-lack flex md:flex-col flex-col-reverse items-center justify-center rounded-lg shadow-md md:bg-white md:text-black text-white bg-black border-none'>
-                                        <p className='text-gray-600 text-md font-semibold'>Posts</p>
-                                        <p className='text-white md:text-black font-bold text-4xl'>{userProfile?.no_of_posts}</p>
-                                    </div>
-                                    <div className='w-44 h-28 md:ml-8 border-[1px] border-lack flex md:flex-col flex-col-reverse items-center justify-center rounded-lg shadow-md md:bg-white md:text-black text-white bg-black border-none hover:cursor-pointer' onClick={() => {
-                                        setFollowersModal(true)
-                                    }}>
-                                        <p className='text-gray-600 text-md font-semibold'>Followers</p>
-                                        <p className='text-white md:text-black font-bold text-4xl'>{userProfile?.no_of_followers}</p>
-                                    </div>
-                                    <div className='w-44 h-28 md:ml-8 border-[1px] border-lack flex md:flex-col flex-col-reverse items-center justify-center rounded-lg shadow-md md:bg-white md:text-black text-white bg-black border-none hover:cursor-pointer' onClick={() => {
-                                        setFollowingModal(true)
-                                    }}>
-                                        <p className='text-gray-600 text-md font-semibold'>Follwing</p>
-                                        <p className='text-white md:text-black font-bold text-4xl'>{userProfile?.no_of_following}</p>
-                                    </div>
-                                </div>
-                                <div className='flex flex-row flex-wrap bg-blue-0 mt-5 md:pl-12 md:justify-normal justify-center'>
-                                    {/* <button type="button" class="text-green-700 hover:text-white border border-green-700 hover:bg-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 ">Follow</button> */}
-                                    <button type="button" class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Edit Profile</button>
-                                    <button type="button" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2" onClick={handleUploadButtonClick}>Upload Profile Picture</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className='w-full items-center flex justify-center'>
-                            <button type="button" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 flex align-middle" onClick={() => {
-                                handlePostUploadButtonClick()
-                            }}>Create a post <MdAddAPhoto className='inline-block text-xl ml-3' /></button>
-                        </div>
-
-                        <div className='w-[65%] h-auto m-auto mt-10  flex flex-row flex-wrap mb-10 items-center justify-center'>
-                            {
-                                posts?.map((ele, index) => {
-                                    return <div className='border-[1px] border-black w-36 h-36' key={index} onClick={() => {
-                                        setShowPostModal(true)
-                                        setPostData(ele)
-                                    }}>
-
-                                        <img className='w-[100%] h-[100%]' style={{ "objectFit": "cover" }} src={ele.com_img_link} alt="" />
-                                    </div>
-                                })
-                            }
                         </div>
                     </>
             }

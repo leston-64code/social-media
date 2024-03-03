@@ -7,6 +7,7 @@ import Camera from './modules/components/Camera';
 import MainLayout from './layout/MainLayout';
 import HomePage from './modules/pages/HomePage';
 import SettingUp from './modules/components/SettingUp';
+import SearchPage from './modules/pages/SearchPage';
 
 const App = () => {
   return (
@@ -19,6 +20,7 @@ const App = () => {
             <Route index element={<HomePage />} />
             <Route path="profile" element={<ProfilePage />} />
             <Route path="setting" element={<SettingUp />} />
+            <Route path="search" element={<SearchPage />} />
             {/* <Route path="fst" element={<Fst />} /> */}
           </Route>
             {/* <Route path="/profile" element={<ProfilePage />} /> */}

@@ -1,7 +1,7 @@
 export const successtoastOptions = {
     duration: 4000,
     position: 'top-center',
-    style:{background:"black",color:"white"}
+    style:{background:"white",color:"black"}
 }
 export const loadingtoastOptions = {
     position: 'top-center',

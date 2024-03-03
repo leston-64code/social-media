@@ -1,7 +1,8 @@
 
 import React, { useRef, useEffect } from 'react';
+import { formatDate } from '../../utils/timeFunctions';
 
-const Comment = () => {
+const Comment = ({comment}) => {
     const commentRef = useRef(null);
 
     useEffect(() => {
@@ -16,13 +17,11 @@ const Comment = () => {
     return (
         <div ref={commentRef} className="w-[100%] py-2 border-b-[0.1px] border-gray-300 flex flex-row items-center">
             <div className="w-[15%] h-auto flex justify-center">
-                <div className='rounded-full w-[36px] h-[36px] bg-black'>
-
-                </div>
+                <img src={comment?.compressed_full_pic} className='rounded-full w-[36px] h-[36px]'/>
             </div>
             <div className="flex flex-col w-[85%]">
-                <p className="text-xs font-semibold">@Leston <span className='font-mono ml-3'>this is very nice 💘💘💖🌹💋 Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo ipsum exercitationem sit soluta voluptatem nobis possimus, iure magni harum corrupti.Lorem ipsum dolor sit amet consectetur adipisicing elit. Quo ipsum exercitationem sit soluta voluptatem nobis possimus, iure magni harum corrupti</span></p>
-                <p className="text-[10px] font-semibold text-gray-400"> Commented on :- 23/3/2023 </p>
+                <p className="text-xs font-semibold">{comment?.username} <span className='font-mono ml-3'>{comment?.comment}</span></p>
+                <p className="text-[10px] font-semibold text-gray-400"> Commented on :- {formatDate(comment?.created_at)} </p>
             </div>
         </div>
     );

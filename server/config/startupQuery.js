@@ -63,6 +63,7 @@ function createTables(connection) {
       FOREIGN KEY (user_id) REFERENCES User(user_id) ON DELETE CASCADE,
       FOREIGN KEY (post_id) REFERENCES Post(post_id) ON DELETE CASCADE,
       INDEX idx_post_id (post_id)
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     )
   `;
 

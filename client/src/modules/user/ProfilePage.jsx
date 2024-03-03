@@ -205,7 +205,7 @@ const ProfilePage = () => {
                 followingModal === true ? <UserListModal closeModal={setFollowingModal} /> : null
             }
             {
-                showPostModal === true ? <PostModal setShowPostModal={setShowPostModal} postData={postData} setPostData={setPostData}/> : null
+                showPostModal === true ? <PostModal setShowPostModal={setShowPostModal} postData={postData} setPostData={setPostData} userImage={userProfile?.compressed_full_pic}/> : null
             }
 
             {

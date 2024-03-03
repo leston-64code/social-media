@@ -27,9 +27,9 @@ exports.createPost = async (req, res, next) => {
         }));
 
         const img_link = getSignedUrl(originalKey);
-        const com_img_link=compressedUrls[0]
+        const com_img_link = compressedUrls[0]
         const query = 'INSERT INTO Post (img_link,com_img_link,user_id) VALUES (?,?,?)';
-        const values = [img_link,com_img_link,user_id];
+        const values = [img_link, com_img_link, user_id];
         await executeQuery(query, values);
 
         const updateUserQuery = 'UPDATE User SET no_of_posts = no_of_posts + 1 WHERE user_id = ?';
@@ -47,7 +47,7 @@ exports.deletePost = async (req, res, next) => {
         const post_id = req.params.post_id;
         const user_id = req.params.user_id;
 
-        
+
         const verifyPostQuery = 'SELECT user_id FROM Post WHERE post_id = ?';
         const [post] = await executeQuery(verifyPostQuery, [post_id]);
 
@@ -87,7 +87,7 @@ exports.updatePost = async (req, res, next) => {
     try {
         const post_id = req.params.post_id;
         const user_id = req.params.user_id;
-        const { img_link} = req.body;
+        const { img_link } = req.body;
         const query = 'UPDATE Post SET img_link = ? WHERE post_id = ? AND user_id = ?';
         const values = [img_link, no_of_likes, JSON.stringify(multiple_comment_ids), post_id, user_id];
         await executeQuery(query, values);
@@ -97,13 +97,24 @@ exports.updatePost = async (req, res, next) => {
     }
 }
 
+// exports.getOnePost = async (req, res, next) => {
+//     try {
+//         const post_id = req.params.post_id;
+//         const query = 'SELECT post_id,user_id,time_of_post,no_of_likes,no_of_comments FROM Post WHERE post_id = ?';
+//         const values = [post_id];
+//         const post = await executeQuery(query, values);
+//         return res.status(200).json({ success: true, post });
+//     } catch (error) {
+//         next(error);
+//     }
+// }
 exports.getOnePost = async (req, res, next) => {
     try {
         const post_id = req.params.post_id;
-        const query = 'SELECT * FROM Post WHERE post_id = ?';
+        const query = 'SELECT no_of_likes,no_of_comments,time_of_post FROM Post WHERE post_id = ?';
         const values = [post_id];
         const post = await executeQuery(query, values);
-        return res.status(200).json({success: true, post});
+        return res.status(200).json({ success: true, post });
     } catch (error) {
         next(error);
     }
@@ -115,7 +126,7 @@ exports.getAllPostsOfOneUser = async (req, res, next) => {
         const query = 'SELECT * FROM Post WHERE user_id = ?';
         const values = [user_id];
         const posts = await executeQuery(query, values);
-        return res.status(200).json({success: true, posts});
+        return res.status(200).json({ success: true, posts });
     } catch (error) {
         next(error);
     }
@@ -138,23 +149,23 @@ exports.likePost = async (req, res, next) => {
 
             const unlikeQuery = 'DELETE FROM Likes WHERE user_id = ? AND post_id = ?';
             await executeQuery(unlikeQuery, checkLikeValues);
-            message = 'Post unliked successfully';
+            message = 'Post unliked';
 
-       
+
             const updateLikesQuery = 'UPDATE Post SET no_of_likes = no_of_likes - 1 WHERE post_id = ?';
             await executeQuery(updateLikesQuery, [post_id]);
         } else {
-           
+
             const likeQuery = 'INSERT INTO Likes (user_id, post_id) VALUES (?, ?)';
             await executeQuery(likeQuery, checkLikeValues);
-            message = 'Post liked successfully';
+            message = 'Post liked';
 
-          
+
             const updateLikesQuery = 'UPDATE Post SET no_of_likes = no_of_likes + 1 WHERE post_id = ?';
             await executeQuery(updateLikesQuery, [post_id]);
         }
 
-        return res.status(200).json({ success: true, message});
+        return res.status(200).json({ success: true, message });
     } catch (error) {
         next(error);
     }
@@ -162,9 +173,9 @@ exports.likePost = async (req, res, next) => {
 
 exports.commentOnPost = async (req, res, next) => {
     try {
-        const { post_id,user_id } = req.params;
+        const { post_id, user_id } = req.params;
         const { comment } = req.body;
-        
+
         const query = 'INSERT INTO Comment (user_id, post_id, comment) VALUES (?, ?, ?)';
         const values = [user_id, post_id, comment];
         await executeQuery(query, values);
@@ -207,15 +218,40 @@ exports.deleteComment = async (req, res, next) => {
     }
 }
 
+// exports.getAllCommentsOnAPost = async (req, res, next) => {
+//     try {
+//         const post_id = req.params.post_id;
+//         const query = 'SELECT * FROM Comment WHERE post_id = ?';
+//         const values = [post_id];
+//         const comments = await executeQuery(query, values);
+//         return res.status(200).json({ success: true, comments });
+//     } catch (error) {
+//         next(error);
+//     }
+// }
+
 exports.getAllCommentsOnAPost = async (req, res, next) => {
     try {
         const post_id = req.params.post_id;
-        const query = 'SELECT * FROM Comment WHERE post_id = ?';
+        const query = `
+            SELECT 
+                Comment.*, 
+                User.user_name AS username,
+                User.compressed_full_pic
+            FROM 
+                Comment 
+            INNER JOIN 
+                User 
+            ON 
+                Comment.user_id = User.user_id
+            WHERE 
+                Comment.post_id = ?`;
         const values = [post_id];
         const comments = await executeQuery(query, values);
-        return res.status(200).json({success: true, comments});
+        return res.status(200).json({ success: true, comments });
     } catch (error) {
         next(error);
     }
 }
+
 

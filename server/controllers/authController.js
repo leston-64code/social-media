@@ -67,6 +67,6 @@ exports.loginUser = async (req, res, next) => {
             user
         });
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch user' });
+        return res.status(500).json({ error: 'Failed to fetch user' });
     }
 };

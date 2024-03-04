@@ -265,7 +265,8 @@ exports.getUsersWhoLikedPost = async (req, res, next) => {
                 User.name,
                 User.user_name,
                 User.email,
-                User.compressed_full_pic
+                User.compressed_full_pic,
+                User.user_id
             FROM 
                 Likes 
             INNER JOIN 

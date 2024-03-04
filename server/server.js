@@ -21,6 +21,7 @@ app.use("/api/auth", require("./routes/authRoutes"))
 app.use("/api/post", require("./routes/postRoutes"))
 app.use("/api/profile", require("./routes/profileRoutes"))
 app.use("/api/follow", require("./routes/followRoutes"))
+app.use("/api/users", require("./routes/userRoutes"))
 
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${process.env.PORT}`)

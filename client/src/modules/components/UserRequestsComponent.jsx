@@ -1,9 +1,11 @@
 import axios from "axios"
 import { successtoastOptions } from "../../utils/toastOptions";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 
 const UserRequestsComponent = ({ name, email, imglink, requester_id, setRequests, setRequestsModal }) => {
+    const navigate=useNavigate()
 
     async function acceptFollowRequest(){
         try {
@@ -44,7 +46,9 @@ const UserRequestsComponent = ({ name, email, imglink, requester_id, setRequests
     return (
         <>
             <div className="w-[100%] py-2 border-b-[0.1px] border-gray-300 flex flex-row items-center bg-white">
-                <div className="w-[25%] h-auto flex justify-center">
+                <div className="w-[25%] h-auto flex justify-center" onClick={()=>{
+                    navigate(`/home/user/${requester_id}`)
+                }}>
                     {
                         imglink != null && imglink !== undefined ?
                             <img src={imglink} className='rounded-full w-[40px] h-[40px] bg-black' />
@@ -52,7 +56,9 @@ const UserRequestsComponent = ({ name, email, imglink, requester_id, setRequests
                             <img className='rounded-full w-[40px] h-[40px] bg-black' />
                     }
                 </div>
-                <div className="flex flex-col w-[45%]">
+                <div className="flex flex-col w-[45%]" onClick={()=>{
+                    navigate(`/home/user/${requester_id}`)
+                }}>
                     <p className="text-sm font-semibold">{name}</p>
                     <p className="text-[10px] font-semibold text-gray-400"> {email} </p>
                 </div>

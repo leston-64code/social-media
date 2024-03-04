@@ -8,6 +8,7 @@ import MainLayout from './layout/MainLayout';
 import HomePage from './modules/pages/HomePage';
 import SettingUp from './modules/components/SettingUp';
 import SearchPage from './modules/pages/SearchPage';
+import UserPage from './modules/pages/UserPage';
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
             <Route path="profile" element={<ProfilePage />} />
             <Route path="setting" element={<SettingUp />} />
             <Route path="search" element={<SearchPage />} />
+            <Route path="user/:user_id" element={<UserPage />} />
             {/* <Route path="fst" element={<Fst />} /> */}
           </Route>
             {/* <Route path="/profile" element={<ProfilePage />} /> */}

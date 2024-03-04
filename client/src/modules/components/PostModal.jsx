@@ -125,7 +125,7 @@ const PostModal = ({ postData, setShowPostModal, setPostData, userImage }) => {
                     <div className='w-screen h-screen absolute top-0 left-0 bg-black bg-opacity-85 z-40 flex items-center'>
                         <div className="w-[30%] m-auto h-[50%] flex flex-col bg-white rounded-xl">
                             <div className="w-[100%] h-12 border-b-[1px] border-black flex flex-row">
-                               
+
                                 <p className="font-semibold w-full flex items-center">
                                     <span className="w-[60%] text-right">People liked </span>
 
@@ -138,7 +138,7 @@ const PostModal = ({ postData, setShowPostModal, setPostData, userImage }) => {
                             <div className="flex-1 overflow-auto ">
                                 {
                                     likeUsers?.map((ele, index) => {
-                                        return <UserRowComponent key={index} name={ele.name} email={ele.email} imglink={ele.compressed_full_pic} />
+                                        return <UserRowComponent key={index} name={ele?.name} email={ele?.email} imglink={ele?.compressed_full_pic} user_id={ele?.user_id} />
                                     })
                                 }
                             </div>

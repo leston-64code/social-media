@@ -1,45 +1,55 @@
 import axios from "axios"
-import { successtoastOptions } from "../../utils/toastOptions";
+import { loadingtoastOptions, successtoastOptions } from "../../utils/toastOptions";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
-
 const UserRequestsComponent = ({ name, email, imglink, requester_id, setRequests, setRequestsModal }) => {
+
     const navigate=useNavigate()
 
     async function acceptFollowRequest(){
+        const loading = toast.loading('Please wait...', loadingtoastOptions);
         try {
             await axios.post(`${process.env.REACT_APP_BASE_URL}/api/follow/acceptfollowreq/${requester_id}/${localStorage.getItem("user_id")}`).then((res) => {
                 if (res?.data?.success === true) {
                     setRequestsModal(false)
                     setRequests(null)
                     toast.success('Follow request accepted', successtoastOptions);
+                    toast.dismiss(loading)
                 } else {
                     toast.error('Accepting failed', successtoastOptions);
+                    toast.dismiss(loading)
                 }
             }).catch((error) => {
                 toast.error(' Accepting failed', successtoastOptions);
+                toast.dismiss(loading)
             })
         } catch (error) {
             toast.error(' Accepting failed', successtoastOptions);
+            toast.dismiss(loading)
         } 
     }
 
     async function rejectFollowRequest(){
+        const loading = toast.loading('Please wait...', loadingtoastOptions);
         try {
             await axios.post(`${process.env.REACT_APP_BASE_URL}/api/follow/rejectfollowreq/${requester_id}/${localStorage.getItem("user_id")}`).then((res) => {
                 if (res?.data?.success === true) {
                     setRequestsModal(false)
                     setRequests(null)
                     toast.success('Follow request reject', successtoastOptions);
+                    toast.dismiss(loading)
                 } else {
                     toast.error('Rejecting failed', successtoastOptions);
+                    toast.dismiss(loading)
                 }
             }).catch((error) => {
                 toast.error(' Rejecting failed', successtoastOptions);
+                toast.dismiss(loading)
             })
         } catch (error) {
             toast.error(' Rejecting failed', successtoastOptions);
+            toast.dismiss(loading)
         } 
     }
 
@@ -51,9 +61,9 @@ const UserRequestsComponent = ({ name, email, imglink, requester_id, setRequests
                 }}>
                     {
                         imglink != null && imglink !== undefined ?
-                            <img src={imglink} className='rounded-full w-[40px] h-[40px] bg-black' />
+                            <img src={imglink} className='rounded-full w-[40px] h-[40px] bg-black' alt=""/>
                             :
-                            <img className='rounded-full w-[40px] h-[40px] bg-black' />
+                            <img className='rounded-full w-[40px] h-[40px] bg-black' alt=""/>
                     }
                 </div>
                 <div className="flex flex-col w-[45%]" onClick={()=>{

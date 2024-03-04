@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 import { MdAddAPhoto } from "react-icons/md";
-import UserListModal from '../components/UserListModal'
 import "./style.css"
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -25,9 +24,13 @@ const ProfilePage = () => {
 
     const [loading, setLoading] = useState(true)
     const [postData, setPostData] = useState(null)
-    const [followers,setFollowers]=useState(null)
-    const [following,setFollowing]=useState(null)
-    const [requests,setRequests]=useState(null)
+    const [followers, setFollowers] = useState(null)
+    const [following, setFollowing] = useState(null)
+    const [requests, setRequests] = useState(null)
+
+    const [followerLoading, setFollowerLoading] = useState(false)
+    const [followingLoading, setFollowingLoading] = useState(false)
+    const [pendingLoading, setPendingLoading] = useState(false)
 
     async function getFullProfile() {
         setLoading(true)
@@ -199,16 +202,22 @@ const ProfilePage = () => {
     };
 
     async function getFollowers() {
+        setFollowerLoading(true)
+        const loading = toast.loading('Please wait...', loadingtoastOptions);
         try {
             await axios.get(`${process.env.REACT_APP_BASE_URL}/api/follow/getfollowers/${localStorage.getItem("user_id")}`).then((res) => {
                 if (res?.data?.success === true) {
                     setFollowers(res?.data?.followers);
                     toast.success('Followers fetched', successtoastOptions);
+                    toast.dismiss(loading)
+                    setFollowerLoading(false)
                 } else {
                     toast.error('Fetching followers failed', successtoastOptions);
+                    toast.dismiss(loading)
                 }
             }).catch((error) => {
                 toast.error('Fetching followers failed', successtoastOptions);
+                toast.dismiss(loading)
             })
         } catch (error) {
             toast.error('Fetching followers failed', successtoastOptions);
@@ -216,16 +225,22 @@ const ProfilePage = () => {
     }
 
     async function getFollowing() {
+        setFollowingLoading(true)
+        const loading = toast.loading('Please wait...', loadingtoastOptions);
         try {
             await axios.get(`${process.env.REACT_APP_BASE_URL}/api/follow/getfollowing/${localStorage.getItem("user_id")}`).then((res) => {
                 if (res?.data?.success === true) {
                     setFollowing(res?.data?.following);
                     toast.success('Following fetched', successtoastOptions);
+                    toast.dismiss(loading)
+                    setFollowingLoading(false)
                 } else {
                     toast.error('Fetching following failed', successtoastOptions);
+                    toast.dismiss(loading)
                 }
             }).catch((error) => {
                 toast.error('Fetching following failed', successtoastOptions);
+                toast.dismiss(loading)
             })
         } catch (error) {
             toast.error('Fetching following failed', successtoastOptions);
@@ -233,19 +248,26 @@ const ProfilePage = () => {
     }
 
     async function getPendingRequests() {
+        setPendingLoading(true)
+        const loading = toast.loading('Please wait...', loadingtoastOptions);
         try {
             await axios.get(`${process.env.REACT_APP_BASE_URL}/api/follow/getpending/${localStorage.getItem("user_id")}`).then((res) => {
                 if (res?.data?.success === true) {
                     setRequests(res?.data?.pending);
                     toast.success('Pending Requests fetched', successtoastOptions);
+                    toast.dismiss(loading)
+                    setPendingLoading(false)
                 } else {
                     toast.error('Fetching pending failed', successtoastOptions);
+                    toast.dismiss(loading)
                 }
             }).catch((error) => {
                 toast.error('Fetching pending failed', successtoastOptions);
+                toast.dismiss(loading)
             })
         } catch (error) {
             toast.error('Fetching pending failed', successtoastOptions);
+            toast.dismiss(loading)
         }
     }
 
@@ -257,83 +279,116 @@ const ProfilePage = () => {
         <>
             {
                 followersModal === true ?
+
                     <div className='w-screen h-screen absolute top-0 left-0 bg-black bg-opacity-85 z-40 flex items-center'>
+
                         <div className="md:w-[30%] w-[95%] h-[70%] m-auto md:h-[50%] flex flex-col bg-white rounded-xl">
-                            <div className="w-[100%] h-12 border-b-[1px] border-black flex flex-row">
+                            {
+                                followerLoading === true ?
+                                    <Loading />
+                                    :
+                                    <>
+                                        <div className="w-[100%] h-12 border-b-[1px] border-black flex flex-row">
 
-                                <p className="font-semibold w-full flex items-center">
-                                    <span className="w-[60%] text-right">Followers </span>
+                                            <p className="font-semibold w-full flex items-center">
+                                                <span className="w-[60%] text-right">Followers </span>
 
-                                    <span className="justify-end w-[40%] flex items-end"><IoCloseCircleOutline className='text-black font-bold hover:cursor-pointer text-2xl mr-5' onClick={() => {
-                                        setFollowersModal(false)
-                                        setFollowers(null)
-                                    }} /></span></p>
+                                                <span className="justify-end w-[40%] flex items-end"><IoCloseCircleOutline className='text-black font-bold hover:cursor-pointer text-2xl mr-5' onClick={() => {
+                                                    setFollowersModal(false)
+                                                    setFollowers(null)
+                                                }} /></span></p>
 
-                            </div>
-                            <div className="flex-1 overflow-auto ">
-                                {
-                                    followers?.map((ele, index) => {
-                                        return <UserRowComponent key={index} name={ele?.name} email={ele?.email} imglink={ele?.compressed_full_pic} user_id={ele?.user_id}/>
-                                    })
-                                }
-                            </div>
+                                        </div>
+                                        <div className="flex-1 overflow-auto ">
+                                            {
+                                                followers?.map((ele, index) => {
+                                                    return <UserRowComponent key={index} name={ele?.name} email={ele?.email} imglink={ele?.compressed_full_pic} user_id={ele?.user_id} />
+                                                })
+                                            }
+                                        </div>
+                                    </>
+                            }
                         </div>
 
+
                     </div>
+
                     : null
             }
             {
                 followingModal === true ?
+
+
                     <div className='w-screen h-screen absolute top-0 left-0 bg-black bg-opacity-85 z-40 flex items-center'>
                         <div className="md:w-[30%] w-[95%] h-[70%] m-auto md:h-[50%] flex flex-col bg-white rounded-xl">
-                            <div className="w-[100%] h-12 border-b-[1px] border-black flex flex-row">
+                            {
+                                followingLoading === true ?
+                                    <Loading />
+                                    :
+                                    <>
+                                        <div className="w-[100%] h-12 border-b-[1px] border-black flex flex-row">
 
-                                <p className="font-semibold w-full flex items-center">
-                                    <span className="w-[60%] text-right">Following </span>
+                                            <p className="font-semibold w-full flex items-center">
+                                                <span className="w-[60%] text-right">Following </span>
 
-                                    <span className="justify-end w-[40%] flex items-end"><IoCloseCircleOutline className='text-black font-bold hover:cursor-pointer text-2xl mr-5' onClick={() => {
-                                        setFollowingModal(false)
-                                        setFollowing(null)
-                                    }} /></span></p>
+                                                <span className="justify-end w-[40%] flex items-end"><IoCloseCircleOutline className='text-black font-bold hover:cursor-pointer text-2xl mr-5' onClick={() => {
+                                                    setFollowingModal(false)
+                                                    setFollowing(null)
+                                                }} /></span></p>
 
-                            </div>
-                            <div className="flex-1 overflow-auto ">
-                                {
-                                    following?.map((ele, index) => {
-                                        return <UserRowComponent key={index} name={ele?.name} email={ele?.email} imglink={ele?.compressed_full_pic} user_id={ele?.user_id} />
-                                    })
-                                }
-                            </div>
+                                        </div>
+                                        <div className="flex-1 overflow-auto ">
+                                            {
+                                                following?.map((ele, index) => {
+                                                    return <UserRowComponent key={index} name={ele?.name} email={ele?.email} imglink={ele?.compressed_full_pic} user_id={ele?.user_id} />
+                                                })
+                                            }
+                                        </div>
+                                    </>
+                            }
+
                         </div>
 
                     </div>
+
                     : null
             }
             {
                 requestsModal === true ?
+
+
                     <div className='w-screen h-screen absolute top-0 left-0 bg-black bg-opacity-85 z-40 flex items-center'>
                         <div className="md:w-[30%] w-[95%] h-[70%] m-auto md:h-[50%] flex flex-col bg-white rounded-xl">
-                            <div className="w-[100%] h-12 border-b-[1px] border-black flex flex-row">
+                            {
+                                pendingLoading === true ?
+                                    <Loading />
+                                    :
+                                    <>
+                                        <div className="w-[100%] h-12 border-b-[1px] border-black flex flex-row">
 
-                                <p className="font-semibold w-full flex items-center">
-                                    <span className="w-[60%] text-right">Pending </span>
+                                            <p className="font-semibold w-full flex items-center">
+                                                <span className="w-[60%] text-right">Pending </span>
 
-                                    <span className="justify-end w-[40%] flex items-end"><IoCloseCircleOutline className='text-black font-bold hover:cursor-pointer text-2xl mr-5' onClick={() => {
-                                        setRequestsModal(false)
-                                        setRequests(null)
-                                    }} /></span></p>
+                                                <span className="justify-end w-[40%] flex items-end"><IoCloseCircleOutline className='text-black font-bold hover:cursor-pointer text-2xl mr-5' onClick={() => {
+                                                    setRequestsModal(false)
+                                                    setRequests(null)
+                                                }} /></span></p>
 
-                            </div>
-                            <div className="flex-1 overflow-auto ">
-                                {
-                                    requests?.map((ele, index) => {
-                                        return <UserRequestsComponent key={index} name={ele?.name} email={ele?.email} imglink={ele?.compressed_full_pic} requester_id={ele?.requester_id} setRequestsModal={setRequestsModal} setRequests={setRequests} />
-                                    })
-                                }
-                            </div>
+                                        </div>
+                                        <div className="flex-1 overflow-auto ">
+                                            {
+                                                requests?.map((ele, index) => {
+                                                    return <UserRequestsComponent key={index} name={ele?.name} email={ele?.email} imglink={ele?.compressed_full_pic} requester_id={ele?.requester_id} setRequestsModal={setRequestsModal} setRequests={setRequests} />
+                                                })
+                                            }
+                                        </div>
+                                    </>
+                            }
+
                         </div>
 
                     </div>
+
                     : null
             }
             {
@@ -387,13 +442,13 @@ const ProfilePage = () => {
                                             <p className='text-gray-600 text-md font-semibold'>Follwing</p>
                                             <p className=' md:text-black font-bold text-4xl'>{userProfile?.no_of_following}</p>
                                         </div>
-                                        
+
                                     </div>
                                     <div className='flex flex-row flex-wrap bg-blue-0 mt-5 md:pl-12 md:justify-normal justify-center'>
                                         {/* <button type="button" class="text-green-700 hover:text-white border border-green-700 hover:bg-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 ">Follow</button> */}
                                         <button type="button" class="text-red-700 hover:text-white border border-red-700 hover:bg-red-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2">Edit Profile</button>
                                         <button type="button" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2" onClick={handleUploadButtonClick}>Upload Profile Picture</button>
-                                        <button type="button" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2" onClick={()=>{
+                                        <button type="button" class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2" onClick={() => {
                                             getPendingRequests()
                                             setRequestsModal(true)
                                         }}>Pending Requests</button>

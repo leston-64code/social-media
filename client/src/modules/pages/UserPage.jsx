@@ -1,6 +1,6 @@
 import axios from 'axios'
-import React, { useEffect, useState } from 'react'
-import {useParams} from 'react-router-dom';
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom';
 import toast from 'react-hot-toast'
 import { IoCloseCircleOutline } from 'react-icons/io5'
 import { loadingtoastOptions, successtoastOptions } from '../../utils/toastOptions'
@@ -11,20 +11,23 @@ import UserRowComponent from '../components/UserRowComponent'
 
 const UserPage = () => {
 
-    const {user_id}=useParams()
+    const { user_id } = useParams()
 
     const [followersModal, setFollowersModal] = useState(false)
     const [followingModal, setFollowingModal] = useState(false)
     const [showPostModal, setShowPostModal] = useState(false)
 
-    
+
     const [userProfile, setUserProfile] = useState(null)
     const [posts, setPosts] = useState(null)
 
     const [loading, setLoading] = useState(true)
     const [postData, setPostData] = useState(null)
-    const [followers,setFollowers]=useState(null)
-    const [following,setFollowing]=useState(null)
+    const [followers, setFollowers] = useState(null)
+    const [following, setFollowing] = useState(null)
+
+    const [followerLoading, setFollowerLoading] = useState(false)
+    const [followingLoading, setFollowingLoading] = useState(false)
 
     async function getFullProfile() {
         setLoading(true)
@@ -56,36 +59,50 @@ const UserPage = () => {
     }
 
     async function getFollowers() {
+        setFollowerLoading(true)
+        const loading = toast.loading('Please wait...', loadingtoastOptions);
         try {
             await axios.get(`${process.env.REACT_APP_BASE_URL}/api/follow/getfollowers/${user_id}`).then((res) => {
                 if (res?.data?.success === true) {
                     setFollowers(res?.data?.followers);
                     toast.success('Followers fetched', successtoastOptions);
+                    toast.dismiss(loading)
+                    setFollowerLoading(false)
                 } else {
                     toast.error('Fetching followers failed', successtoastOptions);
+                    toast.dismiss(loading)
                 }
             }).catch((error) => {
                 toast.error('Fetching followers failed', successtoastOptions);
+                toast.dismiss(loading)
             })
         } catch (error) {
             toast.error('Fetching followers failed', successtoastOptions);
+            toast.dismiss(loading)
         }
     }
 
     async function getFollowing() {
+        setFollowingLoading(true)
+        const loading = toast.loading('Please wait...', loadingtoastOptions);
         try {
             await axios.get(`${process.env.REACT_APP_BASE_URL}/api/follow/getfollowing/${user_id}`).then((res) => {
                 if (res?.data?.success === true) {
                     setFollowing(res?.data?.following);
                     toast.success('Following fetched', successtoastOptions);
+                    toast.dismiss(loading)
+                    setFollowingLoading(false)
                 } else {
                     toast.error('Fetching following failed', successtoastOptions);
+                    toast.dismiss(loading)
                 }
             }).catch((error) => {
                 toast.error('Fetching following failed', successtoastOptions);
+                toast.dismiss(loading)
             })
         } catch (error) {
             toast.error('Fetching following failed', successtoastOptions);
+            toast.dismiss(loading)
         }
     }
 
@@ -96,56 +113,78 @@ const UserPage = () => {
         <>
             {
                 followersModal === true ?
+
                     <div className='w-screen h-screen absolute top-0 left-0 bg-black bg-opacity-85 z-40 flex items-center'>
+
                         <div className="md:w-[30%] w-[95%] h-[70%] m-auto md:h-[50%] flex flex-col bg-white rounded-xl">
-                            <div className="w-[100%] h-12 border-b-[1px] border-black flex flex-row">
+                            {
+                                followerLoading === true ?
+                                    <Loading />
+                                    :
+                                    <>
+                                        <div className="w-[100%] h-12 border-b-[1px] border-black flex flex-row">
 
-                                <p className="font-semibold w-full flex items-center">
-                                    <span className="w-[60%] text-right">Followers </span>
+                                            <p className="font-semibold w-full flex items-center">
+                                                <span className="w-[60%] text-right">Followers </span>
 
-                                    <span className="justify-end w-[40%] flex items-end"><IoCloseCircleOutline className='text-black font-bold hover:cursor-pointer text-2xl mr-5' onClick={() => {
-                                        setFollowersModal(false)
-                                        setFollowers(null)
-                                    }} /></span></p>
+                                                <span className="justify-end w-[40%] flex items-end"><IoCloseCircleOutline className='text-black font-bold hover:cursor-pointer text-2xl mr-5' onClick={() => {
+                                                    setFollowersModal(false)
+                                                    setFollowers(null)
+                                                }} /></span></p>
 
-                            </div>
-                            <div className="flex-1 overflow-auto ">
-                                {
-                                    followers?.map((ele, index) => {
-                                        return <UserRowComponent key={index} name={ele.name} email={ele.email} imglink={ele.compressed_full_pic} />
-                                    })
-                                }
-                            </div>
+                                        </div>
+                                        <div className="flex-1 overflow-auto ">
+                                            {
+                                                followers?.map((ele, index) => {
+                                                    return <UserRowComponent key={index} name={ele?.name} email={ele?.email} imglink={ele?.compressed_full_pic} user_id={ele?.user_id} />
+                                                })
+                                            }
+                                        </div>
+                                    </>
+                            }
                         </div>
 
+
                     </div>
+
                     : null
             }
             {
                 followingModal === true ?
+
+
                     <div className='w-screen h-screen absolute top-0 left-0 bg-black bg-opacity-85 z-40 flex items-center'>
                         <div className="md:w-[30%] w-[95%] h-[70%] m-auto md:h-[50%] flex flex-col bg-white rounded-xl">
-                            <div className="w-[100%] h-12 border-b-[1px] border-black flex flex-row">
+                            {
+                                followingLoading === true ?
+                                    <Loading />
+                                    :
+                                    <>
+                                        <div className="w-[100%] h-12 border-b-[1px] border-black flex flex-row">
 
-                                <p className="font-semibold w-full flex items-center">
-                                    <span className="w-[60%] text-right">Following </span>
+                                            <p className="font-semibold w-full flex items-center">
+                                                <span className="w-[60%] text-right">Following </span>
 
-                                    <span className="justify-end w-[40%] flex items-end"><IoCloseCircleOutline className='text-black font-bold hover:cursor-pointer text-2xl mr-5' onClick={() => {
-                                        setFollowingModal(false)
-                                        setFollowing(null)
-                                    }} /></span></p>
+                                                <span className="justify-end w-[40%] flex items-end"><IoCloseCircleOutline className='text-black font-bold hover:cursor-pointer text-2xl mr-5' onClick={() => {
+                                                    setFollowingModal(false)
+                                                    setFollowing(null)
+                                                }} /></span></p>
 
-                            </div>
-                            <div className="flex-1 overflow-auto ">
-                                {
-                                    following?.map((ele, index) => {
-                                        return <UserRowComponent key={index} name={ele.name} email={ele.email} imglink={ele.compressed_full_pic} />
-                                    })
-                                }
-                            </div>
+                                        </div>
+                                        <div className="flex-1 overflow-auto ">
+                                            {
+                                                following?.map((ele, index) => {
+                                                    return <UserRowComponent key={index} name={ele?.name} email={ele?.email} imglink={ele?.compressed_full_pic} user_id={ele?.user_id} />
+                                                })
+                                            }
+                                        </div>
+                                    </>
+                            }
+
                         </div>
 
                     </div>
+
                     : null
             }
             {
@@ -201,11 +240,11 @@ const UserPage = () => {
                                         </div>
 
                                     </div>
-                                    
+
                                 </div>
                             </div>
 
-                            
+
 
                             <div className='md:w-[65%] w-full h-auto m-auto mt-10  flex flex-row flex-wrap mb-10 items-center justify-center '>
                                 {

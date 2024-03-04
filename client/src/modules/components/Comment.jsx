@@ -2,7 +2,7 @@
 import React, { useRef, useEffect } from 'react';
 import { formatDate } from '../../utils/timeFunctions';
 
-const Comment = ({comment}) => {
+const Comment = ({ comment }) => {
     const commentRef = useRef(null);
 
     useEffect(() => {
@@ -17,7 +17,7 @@ const Comment = ({comment}) => {
     return (
         <div ref={commentRef} className="w-[100%] py-2 border-b-[0.1px] border-gray-300 flex flex-row items-center">
             <div className="w-[15%] h-auto flex justify-center">
-                <img src={comment?.compressed_full_pic} className='rounded-full w-[36px] h-[36px]'/>
+                <img src={comment?.compressed_full_pic} className='rounded-full w-[36px] h-[36px]' alt=''/>
             </div>
             <div className="flex flex-col w-[85%]">
                 <p className="text-xs font-semibold">{comment?.username} <span className='font-mono ml-3'>{comment?.comment}</span></p>

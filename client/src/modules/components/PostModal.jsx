@@ -6,9 +6,8 @@ import Comment from "./Comment";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { successtoastOptions } from "../../utils/toastOptions";
+import { loadingtoastOptions, successtoastOptions } from "../../utils/toastOptions";
 import { formatDate } from "../../utils/timeFunctions";
-import UserListModal from "./UserListModal";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import UserRowComponent from "./UserRowComponent";
 
@@ -26,6 +25,7 @@ const PostModal = ({ postData, setShowPostModal, setPostData, userImage }) => {
     const [showModal, setShowModal] = useState(false)
 
     async function createComment() {
+        const loading = toast.loading('Please wait...', loadingtoastOptions);
         try {
             await axios.post(`${process.env.REACT_APP_BASE_URL}/api/post/createcomment/${localStorage.getItem("user_id")}/${postData.post_id}`, { comment: inputComment }).then((res) => {
                 if (res?.data?.success === true) {
@@ -33,30 +33,40 @@ const PostModal = ({ postData, setShowPostModal, setPostData, userImage }) => {
                     getOnePost()
                     getAllComments()
                     toast.success('Comment added 💌', successtoastOptions);
+                    toast.dismiss(loading)
                 } else {
                     toast.error('Creating comment failed', successtoastOptions);
+                    toast.dismiss(loading)
                 }
             }).catch((error) => {
                 toast.error('Creating comment failed', successtoastOptions);
+                toast.dismiss(loading)
             })
         } catch (error) {
             toast.error('Creating comment failed', successtoastOptions);
+            toast.dismiss(loading)
         }
     }
 
     async function getAllComments() {
+        const loading = toast.loading('Please wait...', loadingtoastOptions);
         try {
             await axios.get(`${process.env.REACT_APP_BASE_URL}/api/post/getallcomments/${postData.post_id}`).then((res) => {
                 if (res?.data?.success === true) {
                     setComments(res?.data?.comments)
+                    toast.success("Comments fetched", successtoastOptions)
+                    toast.dismiss(loading)
                 } else {
                     toast.error('Fetching comment failed', successtoastOptions);
+                    toast.dismiss(loading)
                 }
             }).catch((error) => {
                 toast.error('Fetching comment failed', successtoastOptions);
+                toast.dismiss(loading)
             })
         } catch (error) {
             toast.error('Fetching comment failed', successtoastOptions);
+            toast.dismiss(loading)
         }
     }
 

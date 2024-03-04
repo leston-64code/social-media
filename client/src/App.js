@@ -23,11 +23,8 @@ const App = () => {
             <Route path="setting" element={<SettingUp />} />
             <Route path="search" element={<SearchPage />} />
             <Route path="user/:user_id" element={<UserPage />} />
-            {/* <Route path="fst" element={<Fst />} /> */}
           </Route>
-            {/* <Route path="/profile" element={<ProfilePage />} /> */}
-            {/* <Route path="/cam" element={<Camera />} /> */}
-            {/* <Route path="/main" element={<MainLayout />} /> */}
+          {/* <Route path="/cam" element={<Camera />} /> */}
         </Routes>
       </Router>
 

@@ -62,6 +62,7 @@ const ProfilePage = () => {
     }
 
     const handleUpload = async (file) => {
+        const loading = toast.loading('Please wait...', loadingtoastOptions);
         try {
             const formData = new FormData();
             formData.append('file', file);
@@ -74,6 +75,7 @@ const ProfilePage = () => {
             if (response.ok) {
                 const data = await response.json();
                 if (data.success) {
+                    toast.dismiss(loading)
                     getFullProfile()
                     Swal.fire({
                         icon: 'success',
@@ -81,7 +83,7 @@ const ProfilePage = () => {
                         text: 'Profile picture uploaded successfully'
                     });
                 } else {
-
+                    toast.dismiss(loading)
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
@@ -89,7 +91,7 @@ const ProfilePage = () => {
                     });
                 }
             } else {
-
+                toast.dismiss(loading)
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
@@ -97,7 +99,7 @@ const ProfilePage = () => {
                 });
             }
         } catch (error) {
-
+            toast.dismiss(loading)
             console.error('Error uploading profile picture:', error);
             Swal.fire({
                 icon: 'error',
@@ -132,6 +134,7 @@ const ProfilePage = () => {
     };
 
     const handlePostUpload = async (file) => {
+        const loading = toast.loading('Please wait...', loadingtoastOptions);
         try {
             const formData = new FormData();
             formData.append('file', file);
@@ -144,6 +147,7 @@ const ProfilePage = () => {
             if (response.ok) {
                 const data = await response.json();
                 if (data.success) {
+                    toast.dismiss(loading)
                     getFullProfile()
                     Swal.fire({
                         icon: 'success',
@@ -151,7 +155,7 @@ const ProfilePage = () => {
                         text: 'Posted successfully'
                     });
                 } else {
-
+                    toast.dismiss(loading)
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
@@ -159,7 +163,7 @@ const ProfilePage = () => {
                     });
                 }
             } else {
-
+                toast.dismiss(loading)
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
@@ -167,7 +171,7 @@ const ProfilePage = () => {
                 });
             }
         } catch (error) {
-
+            toast.dismiss(loading)
             console.error('Error uploading profile picture:', error);
             Swal.fire({
                 icon: 'error',

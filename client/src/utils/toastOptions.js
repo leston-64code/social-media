@@ -5,5 +5,5 @@ export const successtoastOptions = {
 }
 export const loadingtoastOptions = {
     position: 'top-center',
-    style:{background:"black",color:"white"}
+    style:{background:"white",color:"black"}
 }

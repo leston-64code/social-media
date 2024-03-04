@@ -41,7 +41,7 @@ const SearchPage = () => {
     return (
         <>
             {
-                loading !== true ?
+                loading === true ?
                     <Loading />
                     :
                     <div className='md:w-[50%] w-full m-auto'>

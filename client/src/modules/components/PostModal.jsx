@@ -13,7 +13,7 @@ import UserRowComponent from "./UserRowComponent";
 
 const PostModal = ({ postData, setShowPostModal, setPostData, userImage }) => {
 
-    const [inputComment, setInputComment] = useState(null)
+    const [inputComment, setInputComment] = useState("")
 
     const [comments, setComments] = useState(null)
     const [noOfcomments, setNoOfComments] = useState(null)
@@ -29,7 +29,7 @@ const PostModal = ({ postData, setShowPostModal, setPostData, userImage }) => {
         try {
             await axios.post(`${process.env.REACT_APP_BASE_URL}/api/post/createcomment/${localStorage.getItem("user_id")}/${postData.post_id}`, { comment: inputComment }).then((res) => {
                 if (res?.data?.success === true) {
-                    setInputComment(null)
+                    setInputComment("")
                     getOnePost()
                     getAllComments()
                     toast.success('Comment added 💌', successtoastOptions);
@@ -133,7 +133,7 @@ const PostModal = ({ postData, setShowPostModal, setPostData, userImage }) => {
             {
                 showModal !== false ?
                     <div className='w-screen h-screen absolute top-0 left-0 bg-black bg-opacity-85 z-40 flex items-center'>
-                        <div className="w-[30%] m-auto h-[50%] flex flex-col bg-white rounded-xl">
+                        <div className="md:w-[30%] w-[95%] h-[70%] m-auto md:h-[50%] flex flex-col bg-white rounded-xl">
                             <div className="w-[100%] h-12 border-b-[1px] border-black flex flex-row">
 
                                 <p className="font-semibold w-full flex items-center">
@@ -201,12 +201,12 @@ const PostModal = ({ postData, setShowPostModal, setPostData, userImage }) => {
                             </div>
                             <div className="w-[100%] md:order-1 order-2 h-16 bg-lack border-t-[1.5px] border-gray-300">
 
-                                <div>
-                                    <div className="relative">
+                                <div className="w-full h-full">
+                                    <div className="relative w-full h-full">
                                         <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                                             <FaComment />
                                         </div>
-                                        <input type="search" id="search" className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50" placeholder="Add Comment" value={inputComment} onChange={(e) => {
+                                        <input type="search" id="search" className="block w-full h-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50" placeholder="Add Comment" value={inputComment} onChange={(e) => {
                                             setInputComment(e.target.value)
                                         }} required />
                                         <button className="text-white absolute end-2.5 bottom-2.5 bg-green-500 hover:bg-blue-800 font-medium rounded-lg text-sm px-4 py-2 " onClick={() => {

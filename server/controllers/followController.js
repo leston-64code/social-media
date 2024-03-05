@@ -36,14 +36,14 @@ exports.acceptFollowRequest = async (req, res, next) => {
         const requester_id = req.params.requester_id;
         const receiver_id = req.params.receiver_id;
 
-        const checkIfAcceptedQuery = 'SELECT status FROM FollowRequest WHERE requester_id = ? AND receiver_id = ?';
+        const checkIfAcceptedQuery = 'SELECT `status` FROM FollowRequest WHERE requester_id = ? AND receiver_id = ?';
         const result = await executeQuery(checkIfAcceptedQuery, [requester_id, receiver_id]);
 
         if (result && result.length > 0 && result[0].status === 'accepted') {
             return res.status(400).json({ message: 'Follow request already accepted' });
         }
 
-        const acceptFollowRequestQuery = 'UPDATE FollowRequest SET status = "accepted" WHERE requester_id = ? AND receiver_id = ?';
+        const acceptFollowRequestQuery = 'UPDATE FollowRequest SET `status` = "accepted" WHERE requester_id = ? AND receiver_id = ?';
         await executeQuery(acceptFollowRequestQuery, [requester_id, receiver_id]);
 
         const getExistingPendingFollowRequestsQuery = 'SELECT pending_follow_requests,following,accepted_followers FROM User WHERE user_id = ?'
@@ -100,7 +100,7 @@ exports.rejectFollowRequest = async (req, res, next) => {
         const receiver_id = req.params.receiver_id;
 
 
-        const rejectFollowRequestQuery = 'UPDATE FollowRequest SET status = "rejected" WHERE requester_id = ? AND receiver_id = ?';
+        const rejectFollowRequestQuery = 'UPDATE FollowRequest SET `status` = "rejected" WHERE requester_id = ? AND receiver_id = ?';
         await executeQuery(rejectFollowRequestQuery, [requester_id, receiver_id]);
 
         const getExistingPendingFollowRequestsQuery = 'SELECT pending_follow_requests FROM User WHERE user_id = ?'

@@ -10,7 +10,6 @@ const UserSearchComponent = ({ user_id, name, email, imglink }) => {
     async function sendFollowRequest() {
         const loading = toast.loading('Please wait...', loadingtoastOptions);
         try {
-            const loading = toast.loading('Please wait...', loadingtoastOptions);
             await axios.post(`${process.env.REACT_APP_BASE_URL}/api/follow/sendfollowreq/${localStorage.getItem("user_id")}/${user_id}`).then((res) => {
                 if (res?.data?.success === true) {
                     toast.success('Follow request sent', successtoastOptions);

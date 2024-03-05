@@ -14,9 +14,9 @@ const SearchPage = () => {
     const [loading, setLoading] = useState(false)
 
     async function handleSearch() {
+        const loading = toast.loading('Please wait...', loadingtoastOptions);
         try {
             setLoading(true)
-            const loading = toast.loading('Please wait...', loadingtoastOptions);
             await axios.post(`${process.env.REACT_APP_BASE_URL}/api/users/getusers`, { pattern: searchTerm }).then((res) => {
                 if (res?.data?.success === true) {
                     setUsers(res?.data?.users)

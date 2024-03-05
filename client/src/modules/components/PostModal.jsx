@@ -10,8 +10,10 @@ import { loadingtoastOptions, successtoastOptions } from "../../utils/toastOptio
 import { formatDate } from "../../utils/timeFunctions";
 import { IoCloseCircleOutline } from "react-icons/io5";
 import UserRowComponent from "./UserRowComponent";
+import { BsThreeDotsVertical } from "react-icons/bs";
+import Swal from "sweetalert2";
 
-const PostModal = ({ postData, setShowPostModal, setPostData, userImage }) => {
+const PostModal = ({ postData, setShowPostModal, setPostData, userImage, getFullProfile }) => {
 
     const [inputComment, setInputComment] = useState("")
 
@@ -122,6 +124,29 @@ const PostModal = ({ postData, setShowPostModal, setPostData, userImage }) => {
         }
     }
 
+    async function handleDeletePost() {
+        const loading = toast.loading('Please wait...', loadingtoastOptions);
+        try {
+            await axios.delete(`${process.env.REACT_APP_BASE_URL}/api/post/delete/${localStorage.getItem("user_id")}/${postData.post_id}`).then((res) => {
+                if (res?.data?.success === true) {
+                    getFullProfile()
+                    setShowPostModal(false)
+                    toast.success(res?.data?.message, loadingtoastOptions)
+                    toast.dismiss(loading)
+                } else {
+                    toast.error('Fetching comment failed', successtoastOptions);
+                    toast.dismiss(loading)
+                }
+            }).catch((error) => {
+                toast.error('Fetching comment failed', successtoastOptions);
+                toast.dismiss(loading)
+            })
+        } catch (error) {
+            toast.error('Fetching comment failed', successtoastOptions);
+            toast.dismiss(loading)
+        }
+    }
+
     useEffect(() => {
         getOnePost()
         getAllComments()
@@ -170,12 +195,30 @@ const PostModal = ({ postData, setShowPostModal, setPostData, userImage }) => {
                         }} />
                     </div>
 
-                    <div className='md:w-[50%] w-[100%] h-[100%]  md:h-[100%]  flex flex-col opacity-100'>
+                    <div className='md:w-[50%] w-[100%] h-[100%]  md:h-[100%]  flex flex-col opacity-100 '>
 
-                        <div className="flex flex-col md:w-[85%] w-[100%] h-full m-auto border-[1.5px] border-gray-300">
+                        <div className="flex flex-col md:w-[85%] w-[100%] h-full m-auto border-[1.5px] border-gray-300 ">
 
-                            <div className="w-[100%] md:order-1 order-1 h-16 border-b-[1.5px] border-gray-500 flex flex-row items-center">
-                                <div className="rounded-full mx-8 w-11 h-11 bg-black">
+                            <div className="w-[100%] md:order-1 order-1 h-16 border-b-[1.5px] border-gray-500 flex flex-row items-center relative">
+                                {
+                                    postData?.user_id == localStorage.getItem("user_id") ?
+                                        <BsThreeDotsVertical className="absolute text-black text-md top-1/3 right-4 hover:cursor-pointer" onClick={() => {
+                                            Swal.fire({
+                                                title: 'Are you sure?',
+                                                text: 'You are about to delete this post.',
+                                                icon: 'warning',
+                                                showCancelButton: true,
+                                                confirmButtonText: 'Yes, delete it!',
+                                                cancelButtonText: 'Cancel'
+                                            }).then((result) => {
+                                                if (result.isConfirmed) {
+                                                    handleDeletePost();
+                                                }
+                                            });
+                                        }} />
+                                        : null
+                                }
+                                <div className="rounded-full md:mx-8 mx-3 w-11 h-11 bg-black">
                                     {
                                         userImage != null ?
                                             <img src={userImage} className="w-[100%] h-[100%] rounded-full object-cover" alt="" />

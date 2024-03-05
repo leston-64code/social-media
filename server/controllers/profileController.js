@@ -72,7 +72,7 @@ exports.getFullUserProfile = async (req, res, next) => {
         const sql = `SELECT * FROM User WHERE user_id = ?`;
         const user = await executeQuery(sql, [user_id]);
 
-        const postsSql = 'SELECT post_id, com_img_link,img_link FROM Post WHERE user_id = ?';
+        const postsSql = 'SELECT post_id,user_id, com_img_link,img_link FROM Post WHERE user_id = ?';
         const posts = await executeQuery(postsSql, [user_id]);
 
         const fullProfile = {

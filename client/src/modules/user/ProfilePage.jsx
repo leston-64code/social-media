@@ -396,7 +396,7 @@ const ProfilePage = () => {
                     : null
             }
             {
-                showPostModal === true ? <PostModal setShowPostModal={setShowPostModal} postData={postData} setPostData={setPostData} userImage={userProfile?.compressed_full_pic} /> : null
+                showPostModal === true ? <PostModal setShowPostModal={setShowPostModal} postData={postData} setPostData={setPostData} userImage={userProfile?.compressed_full_pic} getFullProfile={getFullProfile}/> : null
             }
 
             {

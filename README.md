@@ -7,16 +7,29 @@ Welcome to Link Loop, a social media platform designed to connect people around 
 To install Link Loop, follow these steps:
 
 1. Clone the repository to your local machine:
-    - **`git clone https://github.com/your_username/link-loop.git`**
-3. Navigate to the `client` folder:
-    - **`cd client`**
-4. Install client dependencies:
-    - **`npm install`**
-5. Navigate to the `server` folder:
-    - **`cd server`**
-7. Install server dependencies:
-    - **`npm install`**
+    ```bash
+    git clone https://github.com/your_username/link-loop.git
+    ```
 
+3. Navigate to the `client` folder:
+    ```bash
+    cd client
+    ```
+
+4. Install client dependencies:
+    ```bash
+    npm install
+    ```
+
+5. Navigate to the `server` folder:
+    ```bash
+    cd ../server
+    ```
+
+7. Install server dependencies:
+    ```bash
+    npm install
+    ```
 
 8. You're all set! You can now start the client and server by following the instructions below.
 

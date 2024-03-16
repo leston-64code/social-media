@@ -13,28 +13,31 @@ const comparePasswords = async (plainPassword, hashedPassword) => {
 
 exports.signUpUser = async (req, res, next) => {
     try {
-        const { name, email, password, userName } = req.body;
+        // const { name, email, password, userName } = req.body;
 
-        const emailExists = await checkEmailExists(email);
+        // const emailExists = await checkEmailExists(email);
         
-        if (emailExists) {
-            return res.status(400).json({ error: 'Email already registered' });
-        }
+        // if (emailExists) {
+        //     return res.status(400).json({ error: 'Email already registered' });
+        // }
 
-        const hashedPassword = await hashPassword(password);
+        // const hashedPassword = await hashPassword(password);
 
-        const sql = `INSERT INTO User (name, email, password, user_name) VALUES (?, ?, ?, ?)`;
-        const values = [name, email, hashedPassword, userName];
+        // const sql = `INSERT INTO User (name, email, password, user_name) VALUES (?, ?, ?, ?)`;
+        // const values = [name, email, hashedPassword, userName];
 
-        await executeQuery(sql, values);
+        // await executeQuery(sql, values);
         
-        let user=await executeQuery('SELECT * FROM User where email= ? ;',[email])
+        // let user=await executeQuery('SELECT * FROM User where email= ? ;',[email])
 
+        // return res.status(200).json({
+        //     success: true,
+        //     msg: "User creation successful",
+        //     user:user[0]
+        // });
         return res.status(200).json({
-            success: true,
-            msg: "User creation successful",
-            user:user[0]
-        });
+            success:false
+        })
     } catch (error) {
         res.status(500).json({ error: 'Failed to create user' });
     }
